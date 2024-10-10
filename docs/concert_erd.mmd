@@ -1,0 +1,79 @@
+erDiagram
+    User ||--o{ Reservation : makes
+    User ||--o{ Payment : makes
+    User ||--o{ Queue : joins
+    User ||--|| Balance : has
+    Concert ||--o{ ConcertSchedule : has
+    Concert ||--o{ Seat : has
+    Concert ||--o{ Reservation : has
+    ConcertSchedule ||--|{ Seat : has
+    Reservation ||--|| Seat : reserves 
+    Reservation ||--o| Payment : has
+    Payment ||--o{ PaymentHistory : logs
+
+    User {
+        bigint id PK
+        string name
+    }
+
+    Queue { 
+        bigint id PK
+        string token
+        string status
+        datetime created_at
+        datetime entered_at
+        datetime updated_at
+    }
+
+    Concert {
+        bigint id PK
+        string title
+        string description
+    }
+
+    ConcertSchedule {
+        bigint id PK
+        bigint concert_id FK
+        datetime concert_at
+        datetime reservation_at
+    }
+
+    Seat {
+        bigint id PK
+        bigint concert_schedule_id FK
+        int seat_number
+        int seat_price
+        string status
+    }
+
+    Reservation {
+        bigint id PK
+        bigint user_id FK
+        bigint seat_id FK
+        string status
+        datetime reservation_at
+    }
+
+    Balance {
+        bigint id PK
+        bigint user_id FK
+        bigint amount
+        datetime updated_at
+    }
+
+    Payment {
+        bigint id PK
+        bigint user_id FK
+        bigint reservation_id FK
+        bigint amount
+        string status
+        datetime executed_at
+    }
+
+    PaymentHistory {
+        bigint id PK
+        bigint payment_id FK
+        bigint amount
+        string status
+        datetime created_at
+    }
