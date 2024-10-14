@@ -1,6 +1,8 @@
-package hhplus.concert.domain.entity;
+package hhplus.concert.domain.concert.models;
 
 import hhplus.concert.common.type.SeatStatus;
+import hhplus.concert.domain.concert.Seat;
+import hhplus.concert.domain.user.models.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,10 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "concert_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Concert concert;
 
     @ManyToOne
     @JoinColumn(name = "seat_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))

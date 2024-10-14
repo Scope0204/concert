@@ -1,4 +1,4 @@
-package hhplus.concert.domain.entity;
+package hhplus.concert.domain.concert.models;
 
 import jakarta.persistence.*;
 

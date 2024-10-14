@@ -1,6 +1,7 @@
-package hhplus.concert.domain.entity;
+package hhplus.concert.domain.concert;
 
 import hhplus.concert.common.type.SeatStatus;
+import hhplus.concert.domain.concert.models.ConcertSchedule;
 import jakarta.persistence.*;
 
 @Entity

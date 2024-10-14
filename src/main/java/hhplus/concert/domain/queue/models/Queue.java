@@ -1,6 +1,7 @@
-package hhplus.concert.domain.entity;
+package hhplus.concert.domain.queue.models;
 
 import hhplus.concert.common.type.QueueStatus;
+import hhplus.concert.domain.user.models.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -27,17 +28,17 @@ public class Queue {
     private LocalDateTime createdAt;
 
     @Column(name = "entered_at", nullable = false)
-    private LocalDateTime entered_at;
+    private LocalDateTime enteredAt;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
-    public Queue(User user, String token, QueueStatus status, LocalDateTime createdAt, LocalDateTime entered_at, LocalDateTime updated_at) {
+    public Queue(User user, String token, QueueStatus status, LocalDateTime createdAt, LocalDateTime enteredAt, LocalDateTime updatedAt) {
         this.user = user;
         this.token = token;
         this.status = status;
         this.createdAt = createdAt;
-        this.entered_at = entered_at;
-        this.updated_at = updated_at;
+        this.enteredAt = enteredAt;
+        this.updatedAt = updatedAt;
     }
 }

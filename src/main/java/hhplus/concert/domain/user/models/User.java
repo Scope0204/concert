@@ -1,7 +1,9 @@
-package hhplus.concert.domain.entity;
+package hhplus.concert.domain.user.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity
 @Table(name="users")
 public class User {
