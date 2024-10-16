@@ -1,7 +1,7 @@
 package hhplus.concert.domain.payment.models;
 
-import hhplus.concert.common.type.PaymentStatus;
-import hhplus.concert.domain.concert.models.Reservation;
+import hhplus.concert.support.type.PaymentStatus;
+import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.user.models.User;
 import jakarta.persistence.*;
 

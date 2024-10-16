@@ -1,11 +1,15 @@
 package hhplus.concert.domain.queue.models;
 
-import hhplus.concert.common.type.QueueStatus;
+import hhplus.concert.support.type.QueueStatus;
 import hhplus.concert.domain.user.models.User;
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Builder
+@Getter
 @Entity
 public class Queue {
     @Id
@@ -33,12 +37,14 @@ public class Queue {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public Queue(User user, String token, QueueStatus status, LocalDateTime createdAt, LocalDateTime enteredAt, LocalDateTime updatedAt) {
+   /* public Queue(User user, String token, QueueStatus status, LocalDateTime createdAt) {
         this.user = user;
         this.token = token;
         this.status = status;
         this.createdAt = createdAt;
-        this.enteredAt = enteredAt;
-        this.updatedAt = updatedAt;
+    }*/
+
+    public void updateStatus(QueueStatus queueStatus) {
+        this.status = queueStatus;
     }
 }
