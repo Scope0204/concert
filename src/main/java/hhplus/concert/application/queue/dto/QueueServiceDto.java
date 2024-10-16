@@ -5,9 +5,9 @@ import hhplus.concert.support.type.QueueStatus;
 import java.time.LocalDateTime;
 
 public class QueueServiceDto {
-    public static record IssuedToken(String token) {}
+    public record IssuedToken(String token) {}
 
-    public static record Queue(
+    public record Queue(
             QueueStatus status,
             LocalDateTime createdAt,
             int queuePosition
