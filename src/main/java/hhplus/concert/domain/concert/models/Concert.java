@@ -1,7 +1,9 @@
 package hhplus.concert.domain.concert.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Concert {
     @Id

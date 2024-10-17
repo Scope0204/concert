@@ -1,9 +1,11 @@
 package hhplus.concert.domain.concert.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 public class ConcertSchedule {
     @Id

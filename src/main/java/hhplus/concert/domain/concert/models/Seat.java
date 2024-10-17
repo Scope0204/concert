@@ -2,7 +2,9 @@ package hhplus.concert.domain.concert.models;
 
 import hhplus.concert.support.type.SeatStatus;
 import jakarta.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Seat {
 
@@ -19,7 +21,7 @@ public class Seat {
     private int seatNumber;
 
     @Column(name = "seat_price", nullable = false)
-    private int seat_price;
+    private int seatPrice;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
