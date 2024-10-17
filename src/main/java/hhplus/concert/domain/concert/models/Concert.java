@@ -1,5 +1,6 @@
 package hhplus.concert.domain.concert.models;
 
+import hhplus.concert.support.type.ConcertStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -17,8 +18,12 @@ public class Concert {
     @Column(nullable = false)
     private String description;
 
-    public Concert(String title, String description) {
+    @Column(nullable = false)
+    private ConcertStatus concertStatus;
+
+    public Concert(String title, String description, ConcertStatus concertStatus) {
         this.title = title;
         this.description = description;
+        this.concertStatus = concertStatus;
     }
 }

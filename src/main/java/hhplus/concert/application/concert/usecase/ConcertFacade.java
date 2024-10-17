@@ -64,7 +64,7 @@ public class ConcertFacade {
         validateQueueStatus(token);
 
         List<ConcertServiceDto.Seat> availableConcertSeats = concertService
-                .getAvailableSeats(scheduleId)
+                .getAvailableSeats(concertId, scheduleId)
                 .stream()
                 .map(it -> new ConcertServiceDto.Seat(
                         it.getId(),
