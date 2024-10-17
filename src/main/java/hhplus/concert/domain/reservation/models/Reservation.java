@@ -1,13 +1,15 @@
 package hhplus.concert.domain.reservation.models;
 
-import hhplus.concert.support.type.SeatStatus;
-import hhplus.concert.domain.concert.models.Seat;
 import hhplus.concert.domain.concert.models.Concert;
+import hhplus.concert.domain.concert.models.Seat;
 import hhplus.concert.domain.user.models.User;
+import hhplus.concert.support.type.ReservationStatus;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 public class Reservation {
     @Id
@@ -29,13 +31,14 @@ public class Reservation {
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private SeatStatus status;
+    private ReservationStatus status;
 
     @Column(name = "reservation_at", nullable = false)
     private LocalDateTime reservationAt;
 
-    public Reservation(User user, Seat seat, SeatStatus status, LocalDateTime reservationAt) {
+    public Reservation(User user, Concert concert, Seat seat, ReservationStatus status, LocalDateTime reservationAt) {
         this.user = user;
+        this.concert = concert;
         this.seat = seat;
         this.status = status;
         this.reservationAt = reservationAt;

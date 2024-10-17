@@ -64,8 +64,7 @@ public class ConcertService {
 
         validateConcertStatus(concertId);
 
-        ConcertSchedule concertSchedule = concertScheduleRepository.findById(concertScheduleId)
-                .orElseThrow(() -> new ConcertException.ConcertScheduleNotFound());
+        ConcertSchedule concertSchedule = concertScheduleRepository.findById(concertScheduleId);
         if (!validateWithinReservationPeriod(concertSchedule.getReservationAt(), concertSchedule.getConcertAt())) {
             throw new ConcertException.ConcertUnavailable();
         }

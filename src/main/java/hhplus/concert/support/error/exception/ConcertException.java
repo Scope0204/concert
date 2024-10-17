@@ -22,4 +22,10 @@ public abstract class ConcertException extends RuntimeException {
             super("Concert Schedule is not found");
         }
     }
+
+    public static class ConcertSeatNotFound extends ConcertException {
+        public ConcertSeatNotFound() {
+            super("Concert Seat is not found");
+        }
+    }
 }
