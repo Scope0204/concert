@@ -6,10 +6,14 @@ import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.user.components.UserService;
 import hhplus.concert.domain.user.models.User;
 import hhplus.concert.support.type.QueueStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class QueueFacade {
+    @Value("${queue.active-max-size}")
+    private int activeMaxSize;
+
     private final UserService userService;
     private final QueueService queueService;
 
@@ -53,5 +57,20 @@ public class QueueFacade {
                 queue.getCreatedAt(),
                 queuePosition
         );
+    }
+
+    /**
+     * 스케줄러를 통해 대기열 ACTIVE 상태를 관리
+     * WAIT 인 queue 중에서 순서대로 ACTIVE 로 업데이트가 가능한 대기열 id 목록을 확인하여
+     * ACTIVE 상태로 변경(이때, 시간도 같이 기록)
+     */
+    public void maintainActiveQueueCountWithScheduler(){
+        int needToUpdateCount = activeMaxSize - queueService.getQueueCountByStatus(QueueStatus.ACTIVE);
+
+        if(needToUpdateCount > 0) {
+            queueService.updateQueuesToActive(
+                    queueService.getActivatedIdsFromWaitingQueues(needToUpdateCount),
+                    QueueStatus.ACTIVE);
+        }
     }
 }

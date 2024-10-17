@@ -37,14 +37,9 @@ public class Queue {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-   /* public Queue(User user, String token, QueueStatus status, LocalDateTime createdAt) {
-        this.user = user;
-        this.token = token;
-        this.status = status;
-        this.createdAt = createdAt;
-    }*/
-
     public void updateStatus(QueueStatus queueStatus) {
         this.status = queueStatus;
+        this.updatedAt = LocalDateTime.now(); // 현재 시간으로 변경 사항 기록
     }
+
 }
