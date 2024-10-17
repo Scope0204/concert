@@ -9,7 +9,6 @@ erDiagram
     ConcertSchedule ||--|{ Seat : has
     Reservation ||--|| Seat : reserves 
     Reservation ||--o| Payment : has
-    Payment ||--o{ PaymentHistory : logs
 
     User {
         bigint id PK
@@ -49,6 +48,7 @@ erDiagram
     Reservation {
         bigint id PK
         bigint user_id FK
+	bigint concert_id FK 
         bigint seat_id FK
         string status
         datetime reservation_at
@@ -68,12 +68,4 @@ erDiagram
         bigint amount
         string status
         datetime executed_at
-    }
-
-    PaymentHistory {
-        bigint id PK
-        bigint payment_id FK
-        bigint amount
-        string status
-        datetime created_at
     }
