@@ -27,4 +27,11 @@ public class Seat {
     @Enumerated(EnumType.STRING)
     private SeatStatus status;
 
+    public Seat(ConcertSchedule concertSchedule, int seatNumber, int seatPrice, SeatStatus status) {
+        this.concertSchedule = concertSchedule;
+        this.seatNumber = seatNumber;
+        this.seatPrice = seatPrice;
+        this.status = status;
+    }
+
 }
