@@ -3,7 +3,6 @@ package hhplus.concert.application.balance.usecase;
 import hhplus.concert.application.balance.dto.BalanceServiceDto;
 import hhplus.concert.domain.balance.components.BalanceService;
 import hhplus.concert.domain.balance.models.Balance;
-import hhplus.concert.domain.user.components.UserService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,7 +10,7 @@ public class BalanceFacade {
 
     private final BalanceService balanceService;
 
-    public BalanceFacade(UserService userService, BalanceService balanceService) {
+    public BalanceFacade(BalanceService balanceService) {
         this.balanceService = balanceService;
     }
 
