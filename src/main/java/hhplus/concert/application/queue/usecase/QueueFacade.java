@@ -6,13 +6,14 @@ import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.user.components.UserService;
 import hhplus.concert.domain.user.models.User;
 import hhplus.concert.support.type.QueueStatus;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class QueueFacade {
-    @Value("${queue.active-max-size}")
-    private int activeMaxSize;
+    /*@Value("${queue.active-max-size}")
+    private int activeMaxSize;*/
+    // 테스트 용이하게 변경
+    private static final int ACTIVE_MAX_SIZE = 100;
 
     private final UserService userService;
     private final QueueService queueService;
@@ -65,7 +66,7 @@ public class QueueFacade {
      * ACTIVE 상태로 변경(이때, 시간도 같이 기록)
      */
     public void maintainActiveQueueCountWithScheduler(){
-        int needToUpdateCount = activeMaxSize - queueService.getQueueCountByStatus(QueueStatus.ACTIVE);
+        int needToUpdateCount = ACTIVE_MAX_SIZE - queueService.getQueueCountByStatus(QueueStatus.ACTIVE);
 
         if(needToUpdateCount > 0) {
             queueService.updateQueuesToActive(
