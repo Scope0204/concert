@@ -94,4 +94,14 @@ public class ReservationService {
                 SeatStatus.AVAILABLE
         );
     }
+
+    public Reservation findById(Long reservationId) {
+        return reservationRepository.findById(reservationId);
+    }
+
+    // 해당 예약에 대한 상태를 변경한다.
+    @Transactional
+    public void changeStatus(Long reservationId, ReservationStatus reservationStatus) {
+        reservationRepository.updateStatus(reservationId , reservationStatus);
+    }
 }

@@ -18,10 +18,18 @@ public interface JpaReservationRepository extends JpaRepository<Reservation, Lon
     );
 
     @Modifying
+    @Query("UPDATE Reservation r SET r.status = :reservationStatus WHERE r.id = :reservationId")
+    void updateStatus(
+            @Param("reservationId") Long reservationId,
+            @Param("reservationStatus") ReservationStatus reservationStatus
+    );
+
+    @Modifying
     @Query("UPDATE Reservation r SET r.status = :reservationStatus WHERE r.id IN :reservationIds")
     void updateAllStatus(
             @Param("reservationIds") List<Long> reservationIds,
             @Param("reservationStatus") ReservationStatus reservationStatus
     );
+
 }
 

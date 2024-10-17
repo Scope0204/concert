@@ -4,9 +4,11 @@ import hhplus.concert.support.type.PaymentStatus;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.user.models.User;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 public class Payment {
 
@@ -24,7 +26,7 @@ public class Payment {
     private Reservation reservation;
 
     @Column(name = "amount", nullable = false)
-    private Long amount;
+    private int amount;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -33,7 +35,7 @@ public class Payment {
     @Column(name = "executed_at", nullable = false)
     private LocalDateTime executedAt;
 
-    public Payment(User user, Reservation reservation, Long amount, PaymentStatus status, LocalDateTime executedAt) {
+    public Payment(User user, Reservation reservation, int amount, PaymentStatus status, LocalDateTime executedAt) {
         this.user = user;
         this.reservation = reservation;
         this.amount = amount;
