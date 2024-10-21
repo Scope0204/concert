@@ -13,6 +13,7 @@ import hhplus.concert.domain.user.components.UserService;
 import hhplus.concert.domain.user.models.User;
 import hhplus.concert.support.error.exception.PaymentException;
 import hhplus.concert.support.error.exception.QueueException;
+import hhplus.concert.support.type.PaymentStatus;
 import hhplus.concert.support.type.QueueStatus;
 import hhplus.concert.support.type.ReservationStatus;
 import org.springframework.stereotype.Service;
@@ -46,13 +47,13 @@ public class PaymentFacade {
         // 토큰 검증
         Queue queue = queueService.findQueueByToken(token);
         if(queue.getStatus() != QueueStatus.ACTIVE) {
-            new QueueException.QueueNotFound();
+            throw new QueueException.QueueNotFound();
         }
 
         // userID 검증
         User user = userService.findUserInfo(userId);
         Reservation reservation = reservationService.findById(reservationId);
-        if (userId == reservation.getUser().getId()) {
+        if (userId != reservation.getUser().getId()) {
             throw new PaymentException.InvalidRequest();
         }
 
@@ -65,11 +66,13 @@ public class PaymentFacade {
         // 결제 실행
         Payment paymentResult = paymentService.execute(user, reservation);
 
-        // 좌석 상태 변경
-        reservationService.changeStatus(reservationId, ReservationStatus.COMPLETED);
-
-        // 대기열 상태 만료로 처리
-        queueService.updateStatus(queue, QueueStatus.EXPIRED);
+        // 결제가 성공적으로 완료되었을 경우, 좌석상태와 토큰 정보를 변경(아닌경우에는 그대로 유지)
+        if(paymentResult.getStatus() == PaymentStatus.COMPLETED){
+            // 결제 정상적으로 완료되는 경우에만 만료로 처리해야함.
+            reservationService.changeStatus(reservationId, ReservationStatus.COMPLETED);
+            // 대기열 상태 만료로 처리
+            queueService.updateStatus(queue, QueueStatus.EXPIRED);
+        }
 
         return new PaymentServiceDto.Result(
                 paymentResult.getId(),
