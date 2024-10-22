@@ -6,7 +6,7 @@ import hhplus.concert.domain.concert.models.Seat;
 import hhplus.concert.domain.concert.repositories.ConcertRepository;
 import hhplus.concert.domain.concert.repositories.ConcertScheduleRepository;
 import hhplus.concert.domain.concert.repositories.SeatRepository;
-import hhplus.concert.support.error.exception.ConcertException;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.ConcertStatus;
 import hhplus.concert.support.type.SeatStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -105,6 +105,6 @@ class ConcertServiceTest {
         when(concertRepository.findById(concertId)).thenReturn(concert);
 
         // When & Then
-        assertThrows(ConcertException.ConcertUnavailable.class, () -> concertService.getAvailableSchedulesForConcert(concertId));
+        assertThrows(BusinessException.class, () -> concertService.getAvailableSchedulesForConcert(concertId));
     }
 }

@@ -3,7 +3,8 @@ package hhplus.concert.infra.impl;
 import hhplus.concert.domain.concert.models.Seat;
 import hhplus.concert.domain.concert.repositories.SeatRepository;
 import hhplus.concert.infra.jpa.JpaSeatRepository;
-import hhplus.concert.support.error.exception.ConcertException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.SeatStatus;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +26,7 @@ public class SeatRepositoryImpl implements SeatRepository {
     @Override
     public Seat findById(Long seatId) {
         return jpaSeatRepository.findById(seatId)
-                .orElseThrow(() -> new ConcertException.ConcertSeatNotFound());
+                .orElseThrow(() -> new BusinessException(ErrorCode.CONCERT_SEAT_NOT_FOUND));
     }
 
     @Override

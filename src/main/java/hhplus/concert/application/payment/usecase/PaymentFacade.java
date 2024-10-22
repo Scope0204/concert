@@ -11,8 +11,8 @@ import hhplus.concert.domain.reservation.components.ReservationService;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.user.components.UserService;
 import hhplus.concert.domain.user.models.User;
-import hhplus.concert.support.error.exception.PaymentException;
-import hhplus.concert.support.error.exception.QueueException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.PaymentStatus;
 import hhplus.concert.support.type.QueueStatus;
 import hhplus.concert.support.type.ReservationStatus;
@@ -47,20 +47,20 @@ public class PaymentFacade {
         // 토큰 검증
         Queue queue = queueService.findQueueByToken(token);
         if(queue.getStatus() != QueueStatus.ACTIVE) {
-            throw new QueueException.QueueNotFound();
+            throw new BusinessException(ErrorCode.QUEUE_NOT_FOUND);
         }
 
         // userID 검증
         User user = userService.findUserInfo(userId);
         Reservation reservation = reservationService.findById(reservationId);
         if (userId != reservation.getUser().getId()) {
-            throw new PaymentException.InvalidRequest();
+            throw new BusinessException(ErrorCode.CLIENT_ERROR);
         }
 
         // 잔액이 충분한지 확인
         Balance balance = balanceService.getBalanceByUserId(userId);
         if(reservation.getSeat().getSeatPrice() > balance.getAmount()){
-            throw new PaymentException.InvalidPaymentAmount();
+            throw new BusinessException(ErrorCode.PAYMENT_INSUFFICIENT_BALANCE);
         }
 
         // 결제 실행

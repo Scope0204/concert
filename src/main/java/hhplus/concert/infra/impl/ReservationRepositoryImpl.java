@@ -4,7 +4,8 @@ package hhplus.concert.infra.impl;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.reservation.repositories.ReservationRepository;
 import hhplus.concert.infra.jpa.JpaReservationRepository;
-import hhplus.concert.support.error.exception.ReservationException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.ReservationStatus;
 import org.springframework.stereotype.Repository;
 
@@ -27,7 +28,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     @Override
     public Reservation findById(Long reservationId) {
         return jpaReservationRepository.findById(reservationId)
-                .orElseThrow( () -> new ReservationException.ReservationNotFound.ReservationNotFound());
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESERVATION_NOT_FOUND));
     }
 
     @Override

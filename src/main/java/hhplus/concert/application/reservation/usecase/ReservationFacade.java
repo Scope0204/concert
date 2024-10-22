@@ -7,7 +7,8 @@ import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.reservation.components.ReservationService;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.user.components.UserService;
-import hhplus.concert.support.error.exception.QueueException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.QueueStatus;
 import org.springframework.stereotype.Service;
 
@@ -66,7 +67,7 @@ public class ReservationFacade {
     private void validateQueueStatus(String token){
         Queue queue = queueService.findQueueByToken(token);
         if(queue.getStatus() != QueueStatus.ACTIVE) {
-            throw new QueueException.QueueNotFound();
+            throw new BusinessException(ErrorCode.QUEUE_NOT_FOUND);
         }
     }
 

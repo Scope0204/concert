@@ -12,8 +12,8 @@ import hhplus.concert.domain.reservation.components.ReservationService;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.user.components.UserService;
 import hhplus.concert.domain.user.models.User;
-import hhplus.concert.support.error.exception.PaymentException;
-import hhplus.concert.support.error.exception.QueueException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.PaymentStatus;
 import hhplus.concert.support.type.QueueStatus;
 import hhplus.concert.support.type.ReservationStatus;
@@ -61,9 +61,10 @@ class PaymentFacadeTest {
         when(queue.getStatus()).thenReturn(QueueStatus.EXPIRED); // 만료로 설정
 
         // When & Then
-        assertThrows(QueueException.QueueNotFound.class, () -> {
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
             paymentFacade.executePayment(userId, TOKEN, reservationId);
         });
+        assertEquals(ErrorCode.QUEUE_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test
@@ -88,9 +89,10 @@ class PaymentFacadeTest {
         when(reservation.getUser().getId()).thenReturn(2L);
 
         // When & Then
-        assertThrows(PaymentException.InvalidRequest.class, () -> {
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
             paymentFacade.executePayment(userId, TOKEN, reservationId);
         });
+        assertEquals(ErrorCode.CLIENT_ERROR, exception.getErrorCode());
     }
     @Test
     void 잔액이_충분하지않는경우_예외발생(){
@@ -121,9 +123,10 @@ class PaymentFacadeTest {
         when(balance.getAmount()).thenReturn(100); // 현재 잔액을 낮게 설정
 
         // When & Then
-        assertThrows(PaymentException.InvalidPaymentAmount.class, () -> {
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
             paymentFacade.executePayment(userId, TOKEN, reservationId);
         });
+        assertEquals(ErrorCode.PAYMENT_INSUFFICIENT_BALANCE, exception.getErrorCode());
     }
 
     @Test

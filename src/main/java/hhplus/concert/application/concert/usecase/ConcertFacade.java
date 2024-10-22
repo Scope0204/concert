@@ -4,7 +4,8 @@ import hhplus.concert.application.concert.dto.ConcertServiceDto;
 import hhplus.concert.domain.concert.components.ConcertService;
 import hhplus.concert.domain.queue.components.QueueService;
 import hhplus.concert.domain.queue.models.Queue;
-import hhplus.concert.support.error.exception.QueueException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.QueueStatus;
 import org.springframework.stereotype.Service;
 
@@ -80,7 +81,7 @@ public class ConcertFacade {
     private void validateQueueStatus(String token){
         Queue queue = queueService.findQueueByToken(token);
         if(queue.getStatus() != QueueStatus.ACTIVE) {
-            throw new QueueException.QueueNotFound();
+            throw new BusinessException(ErrorCode.QUEUE_NOT_FOUND);
         }
     }
 
