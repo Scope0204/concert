@@ -20,7 +20,7 @@ public class ConcertController {
     // 콘서트 목록을 조회 합니다.
     @GetMapping("")
     public List<ConcertResponse.Concert> getConcerts(
-            @RequestHeader("TOKEN") String token) {
+            @RequestHeader("Token") String token) {
         return concertFacade
                 .getAvailableConcerts(token)
                 .stream()
@@ -32,7 +32,7 @@ public class ConcertController {
     @GetMapping("/{concertId}/schedules")
     public ConcertResponse.Schedule getConcertSchedules(
             @PathVariable Long concertId,
-            @RequestHeader("TOKEN") String token) {
+            @RequestHeader("Token") String token) {
 
         return ConcertResponse.Schedule.from(concertFacade.getAvailableSchedulesForConcert(concertId, token));
     }
@@ -42,7 +42,7 @@ public class ConcertController {
     public ConcertResponse.AvailableSeat getConcertSeats(
             @PathVariable Long concertId,
             @PathVariable Long scheduleId,
-            @RequestHeader("TOKEN") String token) {
+            @RequestHeader("Token") String token) {
 
         return ConcertResponse.AvailableSeat.from(concertFacade.getAvailableSeats(concertId,scheduleId,token));
     }

@@ -16,7 +16,7 @@ public class BalanceController {
     }
 
     // 잔액을 충전한다.
-    @PostMapping("/users/{userId}/charge")
+    @PostMapping("/users/charge")
     public BalanceResponse.Result chargeBalance(
             @RequestHeader("User-Id") Long userId,
             BalanceRequest.Charge balanceRequest
@@ -25,7 +25,7 @@ public class BalanceController {
     }
 
     // 잔액을 조회한다.
-    @GetMapping("/users/{userId}")
+    @GetMapping("/users")
     public BalanceResponse.Result getUserBalance(
             @RequestHeader("User-Id") Long userId
     ){

@@ -24,7 +24,7 @@ public class QueueController {
     // 유저 토큰을 통해 사용자의 대기열 상태를 조회합니다.
     @GetMapping("/status")
     public QueueResponse.Queue getQueueStatus(
-            @RequestHeader("TOKEN") String token) {
+            @RequestHeader("Token") String token) {
         return QueueResponse.Queue.from(queueFacade.findQueueByToken(token));
     }
 }

@@ -19,7 +19,7 @@ public class PaymentController {
     @PostMapping("/concerts/users")
     public PaymentResponse.Result executePayment(
             @RequestHeader("User-Id") Long userId,
-            @RequestHeader("Authorization") String token,
+            @RequestHeader("Token") String token,
             @RequestBody PaymentRequest.Detail paymentRequest) {
         return PaymentResponse.Result.from(paymentFacade.executePayment(
                 userId,
