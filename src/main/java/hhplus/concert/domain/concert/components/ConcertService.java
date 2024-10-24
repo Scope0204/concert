@@ -67,7 +67,7 @@ public class ConcertService {
 
         ConcertSchedule concertSchedule = concertScheduleRepository.findById(concertScheduleId);
         if (!validateWithinReservationPeriod(concertSchedule.getReservationAt(), concertSchedule.getConcertAt())) {
-            throw new BusinessException(ErrorCode.CONCERT_UNAVAILABLE);
+            throw new BusinessException(ErrorCode.CONCERT_SCHEDULE_NOT_AVAILABLE);
         }
 
         // 예약 가능한 좌석정보만 필터링

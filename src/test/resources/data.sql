@@ -12,20 +12,26 @@ INSERT INTO balance (amount, updated_at, user_id) VALUES
 
 -- Concert
 INSERT INTO concert (concert_status, description, title) VALUES
-(1, 'A great rock concert', 'Rock Fest 2024'),
+(0, 'A great rock concert', 'Rock Fest 2024'),
 (0, 'An upcoming jazz concert', 'Jazz Night 2024'),
 (1, 'A classical symphony', 'Symphony Orchestra');
 
 
 -- Concert Schedule
-INSERT INTO concert_schedule (concert_at, concert_id, reservation_at) VALUES
-('2024-06-01 18:00:00', 1, '2024-05-01 10:00:00'),
-('2024-06-10 19:00:00', 2, '2024-05-05 12:00:00'),
-('2024-06-15 20:00:00', 3, '2024-05-10 14:00:00');
+INSERT INTO concert_schedule (concert_id, concert_at, reservation_at) VALUES
+(1, DATEADD('DAY', 1, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),  -- 예약 가능
+(1, DATEADD('DAY', 2, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),  -- 예약 가능
+(1, DATEADD('DAY', 3, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),  -- 예약 가능
+(1, DATEADD('DAY', -1, CURRENT_TIMESTAMP), DATEADD('DAY', -2, CURRENT_TIMESTAMP)),  -- 예약 불가능 (콘서트 시작이 과거)
+(2, DATEADD('DAY', 1, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),  -- 예약 가능
+(2, DATEADD('DAY', 2, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),  -- 예약 가능
+(2, DATEADD('DAY', 3, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),  -- 예약 가능
+(2, DATEADD('DAY', 1, CURRENT_TIMESTAMP), DATEADD('DAY', 1, CURRENT_TIMESTAMP)),  -- 예약 불가능 (예약 시간이 미래)
+(3, DATEADD('DAY', 1, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),  -- 예약 가능
+(3, DATEADD('DAY', 2, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),  -- 예약 가능
+(3, DATEADD('DAY', 3, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),  -- 예약 가능
+(3, DATEADD('DAY', -2, CURRENT_TIMESTAMP), DATEADD('DAY', -3, CURRENT_TIMESTAMP));  -- 예약 불가능 (콘서트 시작이 과거)
 
--- 예약 가능한 시간이 아직 오지 않은 경우를 추가
-INSERT INTO concert_schedule (concert_id, reservation_at, concert_at)
-VALUES (1, '2024-11-01 12:00:00', '2024-11-15 18:00:00');
 
 -- Seat(좌석 번호 1부터 25까지 이용 가능한 상태로 더미 데이터 생성)
 INSERT INTO seat (seat_number, seat_price, concert_schedule_id, status) VALUES
