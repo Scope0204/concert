@@ -20,11 +20,12 @@ public enum ErrorCode {
     CONCERT_UNAVAILABLE(HttpStatus.BAD_REQUEST,"CONCERT-02","해당 콘서트는 이용할 수 없습니다."),
     CONCERT_SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND,"CONCERT-03","해당 콘서트 일정을 찾을 수 없습니다."),
     CONCERT_SEAT_NOT_FOUND(HttpStatus.NOT_FOUND,"CONCERT-04","해당 좌석 정보를 찾을 수 없습니다."),
+    CONCERT_SCHEDULE_NOT_AVAILABLE(HttpStatus.OK,"CONCERT-05","콘서트 신청기간이 지났습니다."),
 
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND,"RESERVATION-01","예약 정보를 찾을 수 없습니다."),
 
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"PAYMENT-01","결제 정보를 찾을 수 없습니다."),
-    PAYMENT_INSUFFICIENT_BALANCE(HttpStatus.BAD_REQUEST,"PAYMENT-01","잔액이 부족합니다."),
+    PAYMENT_INSUFFICIENT_BALANCE(HttpStatus.OK,"PAYMENT-02","결제 잔액이 부족합니다."),
 
     BALANCE_NOT_FOUND(HttpStatus.NOT_FOUND,"BALANCE-01","잔액을 찾을 수 없습니다."),
     BALANCE_INVALID_CHARGE_AMOUNT(HttpStatus.BAD_REQUEST,"BALANCE-02","유효하지 않은 충전 금액입니다.");
