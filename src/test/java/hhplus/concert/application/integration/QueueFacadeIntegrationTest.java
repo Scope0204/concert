@@ -9,7 +9,9 @@ import hhplus.concert.domain.user.repositories.UserRepository;
 import hhplus.concert.support.error.ErrorCode;
 import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.QueueStatus;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,18 +35,11 @@ public class QueueFacadeIntegrationTest {
     @Autowired
     private QueueRepository queueRepository;
 
-    @BeforeEach
-    void setUp() {
-    }
-    @AfterEach
-    void databaseCleanUp() {
-    }
-
     @Nested
     @DisplayName("[issueQueueToken] 대기열 토큰 발급 테스트")
     class issueQueueTokenTests {
+
         @Test
-        @Transactional
         void 새로운_대기열과_토큰을_생성(){
             // given
             Long userId = 1L;
@@ -69,7 +64,7 @@ public class QueueFacadeIntegrationTest {
             QueueServiceDto.IssuedToken result1 = queueFacade.issueQueueToken(userId);
             System.out.println(result1.token());
             QueueServiceDto.IssuedToken result2 = queueFacade.issueQueueToken(userId);
-            System.out.println(result2.token());
+            System.out.println(result2.token()); // TODO: 트랜잭션 처리나 테스트 환경의 초기화 문제? 토큰이 새롭게 발급 되지 않는 문제가 발생
 
             // then
             Queue queue1 = queueRepository.findByToken(result1.token());
@@ -121,6 +116,7 @@ public class QueueFacadeIntegrationTest {
     @Nested
     @DisplayName("[findQueueByToken] 토큰을 통해 대기열 정보 조회 테스트")
     class findQueueByTokenTests {
+
         @Test
         void 유저_토큰을_통해_대기중인_대기열_정보_조회() {
             // given
@@ -157,6 +153,7 @@ public class QueueFacadeIntegrationTest {
             assertEquals(QueueStatus.WAIT, result.status());
             assertEquals(3, result.queuePosition()); // 총 대기열 4명일때, testUser 앞에 3명이 존재
         }
+
         @Test
         void 대기중이_아닌_대기열은_queuePosition값이_0_이어야_한다() {
             User testUser = new User("scope");
@@ -182,6 +179,7 @@ public class QueueFacadeIntegrationTest {
             assertEquals(0, result.queuePosition());
 
         }
+
         @Test
         void 유효하지_않는_토큰으로_조회하는_경우_에러반환() {
             String invalidToken = "invalid-token";
