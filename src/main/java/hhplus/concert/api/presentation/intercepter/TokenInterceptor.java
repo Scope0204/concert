@@ -1,5 +1,8 @@
 package hhplus.concert.api.presentation.intercepter;
 
+import hhplus.concert.domain.queue.components.QueueService;
+import hhplus.concert.domain.queue.models.Queue;
+import hhplus.concert.support.type.QueueStatus;
 import hhplus.concert.support.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,9 +19,11 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     private static final String TOKEN = "Token";
     private final JwtUtil jwtUtil;
+    private final QueueService queueService;
 
-    public TokenInterceptor(JwtUtil jwtUtil) {
+    public TokenInterceptor(JwtUtil jwtUtil, QueueService queueService) {
         this.jwtUtil = jwtUtil;
+        this.queueService = queueService;
     }
 
     @Override
@@ -31,27 +36,31 @@ public class TokenInterceptor implements HandlerInterceptor {
             boolean hasTokenHeader = Arrays.stream(method.getParameters())
                     .anyMatch(parameter -> parameter.isAnnotationPresent(RequestHeader.class) &&
                             TOKEN.equals(parameter.getAnnotation(RequestHeader.class).value()));
-
             if (hasTokenHeader) {
                 String token = request.getHeader(TOKEN);
-                // 토큰이 유효하지 않으면 401 Unauthorized 에러 응답
+
                 if (token == null) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "token not found");
                     return false;
                 }
-                if (!isValidToken(token)) {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "invalid token");
+                if (!isValidateQueueStatus(token)) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Unauthorized");
                     return false;
                 }
             }
+            return true;
         }
         return true;
     }
 
     /**
-     * 토큰을 검증하는 로직
+     * 토큰을 통해 대기열 상태와 만료 상태를 확인
      */
-    private boolean isValidToken(String token) {
-        return jwtUtil.validateToken(token);
+    private boolean isValidateQueueStatus(String token) {
+        Queue queue = queueService.findQueueByToken(token); // 서비스 계층에서 token 확인
+        if(queue == null || queue.getStatus() == QueueStatus.EXPIRED) {
+            return false;
+        }
+        return true;
     }
 }

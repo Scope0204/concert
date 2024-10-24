@@ -39,7 +39,8 @@ public class Queue {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Queue(User user, String token, QueueStatus status, LocalDateTime createdAt, LocalDateTime enteredAt, LocalDateTime updatedAt) {
+    public Queue(Long id, User user, String token, QueueStatus status, LocalDateTime createdAt, LocalDateTime enteredAt, LocalDateTime updatedAt) {
+        this.id = id;
         this.user = user;
         this.token = token;
         this.status = status;

@@ -27,4 +27,9 @@ public class ConcertScheduleRepositoryImpl implements ConcertScheduleRepository 
         return jpaConcertScheduleRepository.findById(concertScheduleId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CONCERT_SCHEDULE_NOT_FOUND));
     }
+
+    @Override
+    public void save(ConcertSchedule concertSchedule) {
+        jpaConcertScheduleRepository.save(concertSchedule);
+    }
 }

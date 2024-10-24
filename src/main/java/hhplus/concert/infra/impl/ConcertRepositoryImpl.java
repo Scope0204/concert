@@ -27,4 +27,9 @@ public class ConcertRepositoryImpl implements ConcertRepository {
         return jpaConcertRepository.findById(concertId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CONCERT_NOT_FOUND));
     }
+
+    @Override
+    public void save(Concert concert) {
+        jpaConcertRepository.save(concert);
+    }
 }

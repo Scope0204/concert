@@ -2,12 +2,12 @@ package hhplus.concert.domain.balance.models;
 
 import hhplus.concert.domain.user.models.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Balance {
     @Id

@@ -1,6 +1,7 @@
-package hhplus.concert.application.reservation.usecase;
+package hhplus.concert.application.unit.reservation.usecase;
 
 import hhplus.concert.application.reservation.dto.ReservationServiceDto;
+import hhplus.concert.application.reservation.usecase.ReservationFacade;
 import hhplus.concert.domain.concert.components.ConcertService;
 import hhplus.concert.domain.concert.models.Concert;
 import hhplus.concert.domain.concert.models.ConcertSchedule;
