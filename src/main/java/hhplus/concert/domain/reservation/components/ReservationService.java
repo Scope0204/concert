@@ -62,7 +62,8 @@ public class ReservationService {
         reservationRepository.save(reservation);
 
         // 해당 좌석은 예약 불가능 하도록 업데이트
-        seatRepository.updateStatusById(seatId, SeatStatus.UNAVAILABLE);
+        seat.updateStatus(SeatStatus.UNAVAILABLE);
+        seatRepository.save(seat);
 
         return reservation;
     }
