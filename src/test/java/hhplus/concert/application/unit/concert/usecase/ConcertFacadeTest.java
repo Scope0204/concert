@@ -1,6 +1,7 @@
-package hhplus.concert.application.concert.usecase;
+package hhplus.concert.application.unit.concert.usecase;
 
 import hhplus.concert.application.concert.dto.ConcertServiceDto;
+import hhplus.concert.application.concert.usecase.ConcertFacade;
 import hhplus.concert.domain.concert.components.ConcertService;
 import hhplus.concert.domain.concert.models.Concert;
 import hhplus.concert.domain.concert.models.ConcertSchedule;

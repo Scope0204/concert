@@ -1,6 +1,7 @@
-package hhplus.concert.application.queue.usecase;
+package hhplus.concert.application.unit.queue.usecase;
 
 import hhplus.concert.application.queue.dto.QueueServiceDto;
+import hhplus.concert.application.queue.usecase.QueueFacade;
 import hhplus.concert.domain.queue.components.QueueService;
 import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.user.components.UserService;

@@ -1,6 +1,7 @@
-package hhplus.concert.application.payment.usecase;
+package hhplus.concert.application.unit.payment.usecase;
 
 import hhplus.concert.application.payment.dto.PaymentServiceDto;
+import hhplus.concert.application.payment.usecase.PaymentFacade;
 import hhplus.concert.domain.balance.components.BalanceService;
 import hhplus.concert.domain.balance.models.Balance;
 import hhplus.concert.domain.concert.models.Seat;

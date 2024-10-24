@@ -1,4 +1,4 @@
-package hhplus.concert.application.balance.usecase;
+package hhplus.concert.application.unit.balance.usecase;
 
 import hhplus.concert.domain.balance.components.BalanceService;
 import hhplus.concert.domain.balance.models.Balance;
