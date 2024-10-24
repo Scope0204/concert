@@ -1,15 +1,16 @@
 package hhplus.concert.domain.queue.models;
 
-import hhplus.concert.support.type.QueueStatus;
 import hhplus.concert.domain.user.models.User;
+import hhplus.concert.support.type.QueueStatus;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Builder
 @Getter
+@NoArgsConstructor
 @Entity
 public class Queue {
     @Id
@@ -31,12 +32,22 @@ public class Queue {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "entered_at", nullable = false)
+    @Column(name = "entered_at")
     private LocalDateTime enteredAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Builder
+    public Queue(Long id, User user, String token, QueueStatus status, LocalDateTime createdAt, LocalDateTime enteredAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.user = user;
+        this.token = token;
+        this.status = status;
+        this.createdAt = createdAt != null ? createdAt : LocalDateTime.now(); // 현재 시간으로 초기화
+        this.enteredAt = enteredAt;
+        this.updatedAt = updatedAt;
+    }
     public void updateStatus(QueueStatus queueStatus) {
         this.status = queueStatus;
         this.updatedAt = LocalDateTime.now(); // 현재 시간으로 변경 사항 기록

@@ -1,6 +1,7 @@
-package hhplus.concert.application.concert.usecase;
+package hhplus.concert.application.unit.concert.usecase;
 
 import hhplus.concert.application.concert.dto.ConcertServiceDto;
+import hhplus.concert.application.concert.usecase.ConcertFacade;
 import hhplus.concert.domain.concert.components.ConcertService;
 import hhplus.concert.domain.concert.models.Concert;
 import hhplus.concert.domain.concert.models.ConcertSchedule;
@@ -8,7 +9,8 @@ import hhplus.concert.domain.concert.models.Seat;
 import hhplus.concert.domain.queue.components.QueueService;
 import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.user.models.User;
-import hhplus.concert.support.error.exception.QueueException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.ConcertStatus;
 import hhplus.concert.support.type.QueueStatus;
 import hhplus.concert.support.type.SeatStatus;
@@ -22,7 +24,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 class ConcertFacadeTest {
@@ -138,9 +141,10 @@ class ConcertFacadeTest {
         when(queueService.findQueueByToken(TOKEN)).thenReturn(expiredQueue);
 
         // When & Then
-        assertThrows(QueueException.QueueNotFound.class, () -> {
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
             concertFacade.getAvailableConcerts(TOKEN);
         });
+        assertEquals(ErrorCode.QUEUE_NOT_FOUND, exception.getErrorCode());
     }
 
 }

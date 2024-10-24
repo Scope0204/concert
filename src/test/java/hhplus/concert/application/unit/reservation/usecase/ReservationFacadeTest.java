@@ -1,6 +1,7 @@
-package hhplus.concert.application.reservation.usecase;
+package hhplus.concert.application.unit.reservation.usecase;
 
 import hhplus.concert.application.reservation.dto.ReservationServiceDto;
+import hhplus.concert.application.reservation.usecase.ReservationFacade;
 import hhplus.concert.domain.concert.components.ConcertService;
 import hhplus.concert.domain.concert.models.Concert;
 import hhplus.concert.domain.concert.models.ConcertSchedule;
@@ -11,7 +12,8 @@ import hhplus.concert.domain.reservation.components.ReservationService;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.user.components.UserService;
 import hhplus.concert.domain.user.models.User;
-import hhplus.concert.support.error.exception.QueueException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.QueueStatus;
 import hhplus.concert.support.type.ReservationStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,9 +62,10 @@ class ReservationFacadeTest {
         when(queue.getStatus()).thenReturn(QueueStatus.EXPIRED); // 만료로 설정
 
         // When & Then
-        assertThrows(QueueException.QueueNotFound.class, () -> {
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
             reservationFacade.createReservation(reservationRequest, TOKEN);
         });
+        assertEquals(ErrorCode.QUEUE_NOT_FOUND, exception.getErrorCode());
     }
 
     @Test

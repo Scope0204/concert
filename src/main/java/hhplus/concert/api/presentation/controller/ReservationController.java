@@ -19,7 +19,7 @@ public class ReservationController {
     @PostMapping("/concerts")
     public ReservationResponse.Result createReservation(
             @RequestBody ReservationRequest.Detail reservationRequest,
-            @RequestHeader("TOKEN") String token) {
+            @RequestHeader("Token") String token) {
         return ReservationResponse.Result.from(reservationFacade.createReservation(ReservationRequest.toDto(reservationRequest), token));
     }
 }

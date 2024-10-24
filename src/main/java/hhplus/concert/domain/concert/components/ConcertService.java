@@ -6,7 +6,8 @@ import hhplus.concert.domain.concert.models.Seat;
 import hhplus.concert.domain.concert.repositories.ConcertRepository;
 import hhplus.concert.domain.concert.repositories.ConcertScheduleRepository;
 import hhplus.concert.domain.concert.repositories.SeatRepository;
-import hhplus.concert.support.error.exception.ConcertException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.ConcertStatus;
 import hhplus.concert.support.type.SeatStatus;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,7 @@ public class ConcertService {
 
         ConcertSchedule concertSchedule = concertScheduleRepository.findById(concertScheduleId);
         if (!validateWithinReservationPeriod(concertSchedule.getReservationAt(), concertSchedule.getConcertAt())) {
-            throw new ConcertException.ConcertUnavailable();
+            throw new BusinessException(ErrorCode.CONCERT_SCHEDULE_NOT_AVAILABLE);
         }
 
         // 예약 가능한 좌석정보만 필터링
@@ -79,7 +80,7 @@ public class ConcertService {
     private void validateConcertStatus(Long concertId){
         Concert concert = concertRepository.findById(concertId);
         if(concert.getConcertStatus() == ConcertStatus.UNAVAILABLE) {
-            throw new ConcertException.ConcertUnavailable();
+            throw new BusinessException(ErrorCode.CONCERT_UNAVAILABLE);
         }
     }
     // 예약 가능한 시간대 범위에 있는지 검증

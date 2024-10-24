@@ -2,8 +2,10 @@ package hhplus.concert.domain.user.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @Entity
 @Table(name="users")
 public class User {

@@ -1,9 +1,11 @@
 package hhplus.concert.infra.impl;
 
-import hhplus.concert.support.type.QueueStatus;
-import hhplus.concert.infra.jpa.JpaQueueRepository;
 import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.queue.repositoties.QueueRepository;
+import hhplus.concert.infra.jpa.JpaQueueRepository;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
+import hhplus.concert.support.type.QueueStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,6 +21,11 @@ public class QueueRepositoryImpl implements QueueRepository {
     @Override
     public void updateQueuesToActive(List<Long> queueIds, QueueStatus queueStatus) {
         jpaQueueRepository.updateQueuesToActive(queueIds, queueStatus);
+    }
+
+    @Override
+    public List<Queue> findAll() {
+        return jpaQueueRepository.findAll();
     }
 
     @Override
@@ -43,7 +50,8 @@ public class QueueRepositoryImpl implements QueueRepository {
 
     @Override
     public Queue findByToken(String token) {
-        return jpaQueueRepository.findByToken(token);
+        return jpaQueueRepository.findByToken(token)
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUEUE_NOT_FOUND));
     }
 
     @Override

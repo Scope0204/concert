@@ -4,7 +4,8 @@ import hhplus.concert.application.concert.dto.ConcertServiceDto;
 import hhplus.concert.domain.concert.components.ConcertService;
 import hhplus.concert.domain.queue.components.QueueService;
 import hhplus.concert.domain.queue.models.Queue;
-import hhplus.concert.support.error.exception.QueueException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.QueueStatus;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,8 @@ public class ConcertFacade {
      * 토큰을 통해 대기열 상태를 검증하도록 합니다.
      */
     public List<ConcertServiceDto.Concert> getAvailableConcerts(String token){
-        validateQueueStatus(token);
+        // 토큰을 통해 대기열 상태를 검증
+        validateQueueStatus(token); // 이거대신 ConcertServiceDto(Command에 해당) 에서 검증 메서드 구현
 
         return concertService.getAvailableConcerts().stream()
                 .map(concert -> new ConcertServiceDto.Concert(
@@ -80,7 +82,7 @@ public class ConcertFacade {
     private void validateQueueStatus(String token){
         Queue queue = queueService.findQueueByToken(token);
         if(queue.getStatus() != QueueStatus.ACTIVE) {
-            throw new QueueException.QueueNotFound();
+            throw new BusinessException(ErrorCode.QUEUE_NOT_ALLOWED);
         }
     }
 

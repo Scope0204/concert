@@ -3,9 +3,11 @@ package hhplus.concert.domain.balance.models;
 import hhplus.concert.domain.user.models.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 @Getter
+@NoArgsConstructor
 @Entity
 public class Balance {
     @Id

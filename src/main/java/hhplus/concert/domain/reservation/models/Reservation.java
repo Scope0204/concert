@@ -6,10 +6,12 @@ import hhplus.concert.domain.user.models.User;
 import hhplus.concert.support.type.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor
 @Entity
 public class Reservation {
     @Id
@@ -42,5 +44,9 @@ public class Reservation {
         this.seat = seat;
         this.status = status;
         this.reservationAt = reservationAt;
+    }
+
+    public void updateStatus(ReservationStatus reservationStatus) {
+        this.status = reservationStatus;
     }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface QueueRepository {
     void updateQueuesToActive(List<Long> queueIds, QueueStatus queueStatus);
+    List<Queue> findAll();
     List<Queue> findTopByStatusOrderByIdAsc(QueueStatus queueStatus, int limit);
     int getQueueCountByStatus(QueueStatus queueStatus);
     int getQueuePositionInWaitingList(Long queueId, QueueStatus queueStatus);

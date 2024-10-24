@@ -2,14 +2,18 @@ package hhplus.concert.application.reservation.usecase;
 
 import hhplus.concert.application.reservation.dto.ReservationServiceDto;
 import hhplus.concert.domain.concert.components.ConcertService;
+import hhplus.concert.domain.concert.models.Seat;
 import hhplus.concert.domain.queue.components.QueueService;
 import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.reservation.components.ReservationService;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.user.components.UserService;
-import hhplus.concert.support.error.exception.QueueException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.QueueStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ReservationFacade {
@@ -66,15 +70,18 @@ public class ReservationFacade {
     private void validateQueueStatus(String token){
         Queue queue = queueService.findQueueByToken(token);
         if(queue.getStatus() != QueueStatus.ACTIVE) {
-            throw new QueueException.QueueNotFound();
+            throw new BusinessException(ErrorCode.QUEUE_NOT_ALLOWED);
         }
     }
 
     // reservationRequest 정보를 검증
     private void validateReservationRequest(ReservationServiceDto.Request reservationRequest){
         userService.findUserInfo(reservationRequest.userId()); // 유저 정보를 조회
-        concertService.getAvailableSeats(reservationRequest.concertId(), reservationRequest.concertScheduleId()); // 콘서트 스케줄이 유효한지 확인
+        List<Seat> availableSeats = concertService.getAvailableSeats(reservationRequest.concertId(), reservationRequest.concertScheduleId()); // 콘서트와, 스케줄 정보를 통해 사용가능한 좌석정보 조회
+        boolean isSeatAvailable = availableSeats.stream()
+                .anyMatch(seat -> seat.getId().equals(reservationRequest.seatId())); // 좌석 ID가 리스트에 존재하는지 체크
+        if (!isSeatAvailable) {
+            throw new BusinessException(ErrorCode.CONCERT_SEAT_NOT_AVAILABLE); // 예외 발생
+        }
     }
-
-
 }

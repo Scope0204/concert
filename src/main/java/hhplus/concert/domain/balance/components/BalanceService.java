@@ -4,7 +4,8 @@ import hhplus.concert.domain.balance.models.Balance;
 import hhplus.concert.domain.balance.repositories.BalanceRepository;
 import hhplus.concert.domain.user.models.User;
 import hhplus.concert.domain.user.repositories.UserRepository;
-import hhplus.concert.support.error.exception.BalanceException;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,7 @@ public class BalanceService {
     public Balance charge(Long userId, int amount) {
         // 충전 금액이 0원 이하이면 에러
         if (amount <= 0){
-            throw new BalanceException.BalaceAmountInvalid();
+            throw new BusinessException(ErrorCode.BALANCE_INVALID_CHARGE_AMOUNT);
         }
         User user = userRepository.findById(userId);
         Balance balance = balanceRepository.findByUserId(userId);

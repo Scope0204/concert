@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface JpaBalanceRepository extends JpaRepository<Balance, Long> {
-    @Query("SELECT b FROM Balance b WHERE b.user = :userId")
+    @Query("SELECT b FROM Balance b WHERE b.user.id = :userId")
     Balance findByUserId(@Param("userId") Long userId);
 }
 

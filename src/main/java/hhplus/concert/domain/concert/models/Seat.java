@@ -3,8 +3,10 @@ package hhplus.concert.domain.concert.models;
 import hhplus.concert.support.type.SeatStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @Entity
 public class Seat {
 
