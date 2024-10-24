@@ -67,7 +67,7 @@ public class ReservationFacade {
     private void validateQueueStatus(String token){
         Queue queue = queueService.findQueueByToken(token);
         if(queue.getStatus() != QueueStatus.ACTIVE) {
-            throw new BusinessException(ErrorCode.QUEUE_NOT_FOUND);
+            throw new BusinessException(ErrorCode.QUEUE_NOT_ALLOWED);
         }
     }
 

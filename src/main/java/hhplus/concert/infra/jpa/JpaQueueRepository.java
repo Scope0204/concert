@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface JpaQueueRepository extends JpaRepository<Queue, Long> {
 
@@ -27,5 +28,5 @@ public interface JpaQueueRepository extends JpaRepository<Queue, Long> {
     @Query("SELECT q FROM Queue q WHERE q.user.id = :userId AND q.status = :queueStatus")
     Queue findByUserIdAndStatus(@Param("userId") Long userId, @Param("queueStatus") QueueStatus queueStatus);
 
-    Queue findByToken(String token);
+    Optional<Queue> findByToken(String token);
 }
