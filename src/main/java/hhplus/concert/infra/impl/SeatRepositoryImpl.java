@@ -38,4 +38,9 @@ public class SeatRepositoryImpl implements SeatRepository {
     public void updateAllStatusByIds(List<Long> seatIds, SeatStatus seatStatus) {
         jpaSeatRepository.updateAllStatusByIds(seatIds, seatStatus);
     }
+
+    @Override
+    public void save(Seat seat) {
+        jpaSeatRepository.save(seat);
+    }
 }

@@ -45,4 +45,8 @@ public class Reservation {
         this.status = status;
         this.reservationAt = reservationAt;
     }
+
+    public void updateStatus(ReservationStatus reservationStatus) {
+        this.status = reservationStatus;
+    }
 }

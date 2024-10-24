@@ -10,4 +10,5 @@ public interface SeatRepository {
     Seat findById(Long seatId);
     void updateStatusById(Long seatId, SeatStatus seatStatus);
     void updateAllStatusByIds(List<Long> seatIds, SeatStatus seatStatus);
+    void save(Seat seat);
 }

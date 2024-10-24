@@ -47,7 +47,7 @@ public class PaymentFacade {
         // 토큰 검증
         Queue queue = queueService.findQueueByToken(token);
         if(queue.getStatus() != QueueStatus.ACTIVE) {
-            throw new BusinessException(ErrorCode.QUEUE_NOT_FOUND);
+            throw new BusinessException(ErrorCode.QUEUE_NOT_ALLOWED);
         }
 
         // userID 검증
@@ -69,7 +69,7 @@ public class PaymentFacade {
         // 결제가 성공적으로 완료되었을 경우, 좌석상태와 토큰 정보를 변경(아닌경우에는 그대로 유지)
         if(paymentResult.getStatus() == PaymentStatus.COMPLETED){
             // 결제 정상적으로 완료되는 경우에만 만료로 처리해야함.
-            reservationService.changeStatus(reservationId, ReservationStatus.COMPLETED);
+            reservationService.updateStatus(reservation, ReservationStatus.COMPLETED);
             // 대기열 상태 만료로 처리
             queueService.updateStatus(queue, QueueStatus.EXPIRED);
         }

@@ -65,7 +65,7 @@ class PaymentFacadeTest {
         BusinessException exception = assertThrows(BusinessException.class, () -> {
             paymentFacade.executePayment(userId, TOKEN, reservationId);
         });
-        assertEquals(ErrorCode.QUEUE_NOT_FOUND, exception.getErrorCode());
+        assertEquals(ErrorCode.QUEUE_NOT_ALLOWED, exception.getErrorCode());
     }
 
     @Test
@@ -173,8 +173,9 @@ class PaymentFacadeTest {
         assertEquals(1L, result.paymentId());
         assertEquals(1000, result.amount());
         assertEquals(PaymentStatus.COMPLETED, result.paymentStatus());
+
         // 좌석 상태와 대기열 토큰 정보가 만료 처리되었는지 확인
-        verify(reservationService).changeStatus(reservationId, ReservationStatus.COMPLETED);
+        verify(reservationService).updateStatus(reservation, ReservationStatus.COMPLETED);
         verify(queueService).updateStatus(queue, QueueStatus.EXPIRED);
     }
 
