@@ -21,6 +21,7 @@ public enum ErrorCode {
     CONCERT_SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND,"CONCERT-03","해당 콘서트 일정을 찾을 수 없습니다."),
     CONCERT_SEAT_NOT_FOUND(HttpStatus.NOT_FOUND,"CONCERT-04","해당 좌석 정보를 찾을 수 없습니다."),
     CONCERT_SCHEDULE_NOT_AVAILABLE(HttpStatus.OK,"CONCERT-05","콘서트 신청기간이 지났습니다."),
+    CONCERT_SEAT_NOT_AVAILABLE(HttpStatus.OK,"CONCERT-06","해당 콘서트 좌석은 이미 예약 된 상태입니다."),
 
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND,"RESERVATION-01","예약 정보를 찾을 수 없습니다."),
 
