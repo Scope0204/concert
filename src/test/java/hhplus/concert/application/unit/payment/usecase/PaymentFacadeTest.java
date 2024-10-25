@@ -224,7 +224,7 @@ class PaymentFacadeTest {
         assertEquals(PaymentStatus.FAILED, result.paymentStatus());
 
         // 결제가 실패했으므로 좌석 상태와 대기열 상태는 변경되지 않음
-        verify(reservationService, never()).changeStatus(anyLong(), any(ReservationStatus.class));
+        verify(reservationService, never()).updateStatus(any(Reservation.class), any(ReservationStatus.class));
         verify(queueService, never()).updateStatus(any(Queue.class), any(QueueStatus.class));
     }
 

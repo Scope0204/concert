@@ -30,11 +30,6 @@ public class SeatRepositoryImpl implements SeatRepository {
     }
 
     @Override
-    public void updateStatusById(Long seatId, SeatStatus seatStatus) {
-        jpaSeatRepository.updateStatusById(seatId, seatStatus);
-    }
-
-    @Override
     public void updateAllStatusByIds(List<Long> seatIds, SeatStatus seatStatus) {
         jpaSeatRepository.updateAllStatusByIds(seatIds, seatStatus);
     }

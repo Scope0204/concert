@@ -139,7 +139,7 @@ class ReservationServiceTest {
 
         // Then
         verify(reservationRepository).save(result);
-        verify(seatRepository).updateStatusById(seat1Id, SeatStatus.UNAVAILABLE);
+        verify(seatRepository).save(SEAT1);
     }
     @Test
     void 예약_후_5분이내_결제가_이루어지지않은_만료된_예약건을_조회하여_좌석상태와_예약상태를_변경한다() {
