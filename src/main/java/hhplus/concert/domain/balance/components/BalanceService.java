@@ -7,7 +7,6 @@ import hhplus.concert.domain.user.repositories.UserRepository;
 import hhplus.concert.support.error.ErrorCode;
 import hhplus.concert.support.error.exception.BusinessException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -26,7 +25,6 @@ public class BalanceService {
         return balance;
     }
 
-    @Transactional
     public Balance charge(Long userId, int amount) {
         // 충전 금액이 0원 이하이면 에러
         if (amount <= 0){

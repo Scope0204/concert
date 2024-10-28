@@ -7,6 +7,7 @@ import hhplus.concert.domain.user.components.UserService;
 import hhplus.concert.domain.user.models.User;
 import hhplus.concert.support.type.QueueStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class QueueFacade {
@@ -30,9 +31,11 @@ public class QueueFacade {
      * 대기열이 이미 존재하는 경우, 해당 대기열을 만료 상태로 변경
      * 새롭게 대기열 상태에 저장 및 토큰을 발급. 토큰 정보를 전달
      */
+    @Transactional
     public QueueServiceDto.IssuedToken issueQueueToken(Long userId){
-        User user = userService.findUserInfo(userId);
         Queue queue = queueService.findByUserIdAndStatus(userId, QueueStatus.WAIT);
+        User user = userService.findUserInfo(userId);
+
         if(queue!=null){
             queueService.updateStatus(queue, QueueStatus.EXPIRED);
         }
@@ -65,6 +68,7 @@ public class QueueFacade {
      * WAIT 인 queue 중에서 순서대로 ACTIVE 로 업데이트가 가능한 대기열 id 목록을 확인하여
      * ACTIVE 상태로 변경(이때, 시간도 같이 기록)
      */
+    @Transactional
     public void maintainActiveQueueCountWithScheduler(){
         int needToUpdateCount = ACTIVE_MAX_SIZE - queueService.getQueueCountByStatus(QueueStatus.ACTIVE);
 

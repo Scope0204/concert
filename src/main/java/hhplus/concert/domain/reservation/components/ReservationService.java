@@ -45,7 +45,6 @@ public class ReservationService {
      * @param seatId
      * @return Reservation
      */
-    @Transactional
     public Reservation createReservation(Long userId, Long concertId, Long concertScheduleId, Long seatId) {
         User user = userRepository.findById(userId);
         Concert concert = concertRepository.findById(concertId);
@@ -74,7 +73,6 @@ public class ReservationService {
      * 2. 조회 된 예약 건들의 상태를 변경한다(CANCELED)
      * 3. 조회 된 예약 좌석의 상태도 변경한다(AVAILABLE)
      */
-    @Transactional
     public void cancelReservations() {
         List<Reservation> expiredReservations = reservationRepository.findExpiredReservations(
                 ReservationStatus.PENDING,
@@ -100,8 +98,11 @@ public class ReservationService {
         return reservationRepository.findById(reservationId);
     }
 
+    public Reservation findByIdWithPessimisticLock(Long reservationId) {
+        return reservationRepository.findByIdWithPessimisticLock(reservationId);
+    }
+
     // 해당 예약에 대한 상태를 변경한다.
-    @Transactional
     public void updateStatus(Reservation reservation, ReservationStatus reservationStatus) {
         reservation.updateStatus(reservationStatus);
         reservationRepository.save(reservation);

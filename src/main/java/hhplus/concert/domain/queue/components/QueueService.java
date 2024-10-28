@@ -6,7 +6,6 @@ import hhplus.concert.domain.user.models.User;
 import hhplus.concert.support.type.QueueStatus;
 import hhplus.concert.support.util.JwtUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,14 +27,12 @@ public class QueueService {
     }
 
     // 대기열의 상태를 변경한다
-    @Transactional
     public void updateStatus(Queue queue, QueueStatus queueStatus){
         queue.updateStatus(queueStatus);
         queueRepository.save(queue);
     }
 
     // 대기열에 추가하고 토큰을 발급한다
-    @Transactional
     public String enqueueAndGenerateToken(User user) {
         String token = jwtUtil.generateToken(user.getId());
 
@@ -79,7 +76,6 @@ public class QueueService {
     }
 
     // 대기중인 상태(WAIT)의 대기열을 활성화(ACTIVE) 상태로 변경
-    @Transactional
     public void updateQueuesToActive(List<Long> queueIds, QueueStatus queueStatus){
         queueRepository.updateQueuesToActive(queueIds, queueStatus);
     }

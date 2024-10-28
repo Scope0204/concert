@@ -12,6 +12,7 @@ import hhplus.concert.support.error.ErrorCode;
 import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.QueueStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class ReservationFacade {
      * 2. 존재 여부를 확인합니다.
      * 3. 예약을 생성하도록 합니다.
      */
+    @Transactional
     public ReservationServiceDto.Result createReservation(ReservationServiceDto.Request reservationRequest, String token) {
         validateQueueStatus(token);
 
@@ -62,6 +64,7 @@ public class ReservationFacade {
      * ReservationStatus CANCELED
      * SeatStatus AVAILABLE
      */
+    @Transactional
     public void cancelReservationsAndResetSeats(){
         reservationService.cancelReservations();
     }

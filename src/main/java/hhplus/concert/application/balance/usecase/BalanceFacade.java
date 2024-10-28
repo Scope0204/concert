@@ -4,6 +4,7 @@ import hhplus.concert.application.balance.dto.BalanceServiceDto;
 import hhplus.concert.domain.balance.components.BalanceService;
 import hhplus.concert.domain.balance.models.Balance;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BalanceFacade {
@@ -15,6 +16,7 @@ public class BalanceFacade {
     }
 
     // 잔액 충전
+    @Transactional
     public BalanceServiceDto.Result chargeBalance(Long userId, int amount) {
         Balance balanceResult = balanceService.charge(userId, amount);
 
@@ -25,6 +27,7 @@ public class BalanceFacade {
     }
 
     // 잔액 조회
+    @Transactional
     public BalanceServiceDto.Result getBalanceByUserId(Long userId) {
         Balance balanceResult = balanceService.getBalanceByUserId(userId);
 
