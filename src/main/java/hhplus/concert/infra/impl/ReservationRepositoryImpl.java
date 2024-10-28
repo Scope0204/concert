@@ -32,6 +32,12 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     }
 
     @Override
+    public Reservation findByIdWithPessimisticLock(Long reservationId) {
+        return jpaReservationRepository.findByIdWithPessimisticLock(reservationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESERVATION_NOT_FOUND));
+    }
+
+    @Override
     public List<Reservation> findAll() {
         return jpaReservationRepository.findAll();
     }

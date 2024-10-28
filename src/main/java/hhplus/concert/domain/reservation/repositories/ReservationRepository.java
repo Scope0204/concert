@@ -11,6 +11,8 @@ public interface ReservationRepository {
 
     Reservation findById(Long reservationId);
 
+    Reservation findByIdWithPessimisticLock(Long reservationId);
+
     List<Reservation> findAll();
 
     List<Reservation> findExpiredReservations(
@@ -26,4 +28,5 @@ public interface ReservationRepository {
             List<Long> reservationIds,
             ReservationStatus reservationStatus
     );
+
 }
