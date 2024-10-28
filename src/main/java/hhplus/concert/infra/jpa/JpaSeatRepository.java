@@ -14,12 +14,6 @@ public interface JpaSeatRepository extends JpaRepository<Seat, Long> {
     List<Seat> findAllByConcertScheduleId(Long concertScheduleId);
 
     @Modifying
-    @Query("UPDATE Seat seat SET seat.status = :seatStatus WHERE seat.id = :seatId")
-    void updateStatusById(@Param("seatId") Long seatId, @Param("seatStatus") SeatStatus seatStatus);
-
-    @Modifying
     @Query("UPDATE Seat seat SET seat.status = :seatStatus WHERE seat.id IN :seatIds")
     void updateAllStatusByIds(@Param("seatIds") List<Long> seatIds, @Param("seatStatus") SeatStatus seatStatus);
-
-
 }
