@@ -10,14 +10,17 @@ import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.reservation.repositories.ReservationRepository;
 import hhplus.concert.domain.user.models.User;
 import hhplus.concert.domain.user.repositories.UserRepository;
+import hhplus.concert.support.error.ErrorCode;
+import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.ReservationStatus;
 import hhplus.concert.support.type.SeatStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 public class ReservationService {
 
@@ -26,7 +29,6 @@ public class ReservationService {
     private final ConcertRepository concertRepository;
     private final ConcertScheduleRepository concertScheduleRepository;
     private final SeatRepository seatRepository;
-
 
     public ReservationService(ReservationRepository reservationRepository, UserRepository userRepository, ConcertRepository concertRepository, ConcertScheduleRepository concertScheduleRepository, SeatRepository seatRepository) {
         this.reservationRepository = reservationRepository;
@@ -38,7 +40,9 @@ public class ReservationService {
 
     /**
      * 콘서트 좌석 예약 생성
-     * 예약 후 해당 좌석은 이용 불가능 하도록 상태 업데이트
+     * 1. 콘서트 좌석 예약에 필요한 데이터 조회
+     * 2. 콘서트 좌석 예약 생성
+     * 3. 해당 좌석은 이용 불가능 하도록 상태 업데이트 후 저장
      * @param userId
      * @param concertId
      * @param concertScheduleId
@@ -49,7 +53,11 @@ public class ReservationService {
         User user = userRepository.findById(userId);
         Concert concert = concertRepository.findById(concertId);
         ConcertSchedule concertSchedule = concertScheduleRepository.findById(concertScheduleId);
-        Seat seat = seatRepository.findById(seatId);
+        //Seat seat = seatRepository.findById(seatId);
+        Seat seat = seatRepository.findByIdWithPessimisticLock(seatId); // 비관적 락을 적용
+        if(seat.getStatus() == SeatStatus.UNAVAILABLE) { // 좌석이 사용불가능 상태인 경우, 예약이 불가능.
+            throw new BusinessException(ErrorCode.CONCERT_SEAT_NOT_AVAILABLE);
+        }
 
         Reservation reservation = new Reservation(
                 user,
@@ -60,7 +68,6 @@ public class ReservationService {
         );
         reservationRepository.save(reservation);
 
-        // 해당 좌석은 예약 불가능 하도록 업데이트
         seat.updateStatus(SeatStatus.UNAVAILABLE);
         seatRepository.save(seat);
 

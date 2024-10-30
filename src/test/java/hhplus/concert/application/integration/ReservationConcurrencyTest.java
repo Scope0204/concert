@@ -54,14 +54,15 @@ public class ReservationConcurrencyTest {
     private ReservationRepository reservationRepository;
 
     @Test
-    void 동시에_같은좌석을_10회_예약하는_경우_하나의_예약_요청만_성공한다() throws InterruptedException {
+    void 동시에_같은좌석을_여러명이_예약하는_경우_하나의_예약_요청만_성공한다() throws InterruptedException {
         // given
-        List<User> users = createTestUsers(10); // 1 ~ 10명의 테스트 유저 생성
+        int threadCount = 1000;
+
+        List<User> users = createTestUsers(threadCount); // threadCount 만큼의 테스트 유저 생성
         Concert concert = createTestConcert();
         ConcertSchedule schedule = createTestConcertSchedule(concert);
         Seat seat = createTestSeat(schedule);
 
-        int threadCount = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
@@ -108,7 +109,9 @@ public class ReservationConcurrencyTest {
 
         // then
         assertEquals(1, success.get());
-        assertEquals(9, fail.get());
+        assertEquals(999, fail.get());
+        Seat updatedSeat = seatRepository.findById(seat.getId());
+        assertEquals(SeatStatus.UNAVAILABLE, updatedSeat.getStatus()); // 좌석 상태 확인
     }
 
     private List<User> createTestUsers(int count) {
