@@ -45,7 +45,6 @@ class BalanceFacadeTest {
                 LocalDateTime.now()
         );
 
-        when(userRepository.findById(userId)).thenReturn(user);
         when(balanceRepository.findByUserId(userId)).thenReturn(balance);
 
         // When

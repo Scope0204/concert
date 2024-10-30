@@ -17,11 +17,14 @@ public class BalanceRepositoryImpl implements BalanceRepository {
 
     @Override
     public Balance findByUserId(Long userId) {
-        Balance balance = jpaBalanceRepository.findByUserId(userId);
-        if(balance == null) {
-            throw new BusinessException(ErrorCode.BALANCE_NOT_FOUND);
-        }
-        return balance;
+        return jpaBalanceRepository.findByUserId(userId)
+                .orElseThrow(() ->  new BusinessException(ErrorCode.BALANCE_NOT_FOUND));
+    }
+
+    @Override
+    public Balance findByUserIdWithPessimisticLock(Long userId) {
+        return jpaBalanceRepository.findByUserIdWithPessimisticLock(userId)
+                .orElseThrow(() ->  new BusinessException(ErrorCode.BALANCE_NOT_FOUND));
     }
 
     @Override
