@@ -3,7 +3,6 @@ package hhplus.concert.application.balance.usecase;
 import hhplus.concert.application.balance.dto.BalanceServiceDto;
 import hhplus.concert.domain.balance.components.BalanceService;
 import hhplus.concert.domain.balance.models.Balance;
-import hhplus.concert.support.annotation.DistributedLock;
 import hhplus.concert.support.error.ErrorCode;
 import hhplus.concert.support.error.exception.BusinessException;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ public class BalanceFacade {
     }
 
     // 잔액 충전
-    @DistributedLock(key = "#userId")
     public BalanceServiceDto.Result chargeBalance(Long userId, int amount) {
         // 충전 금액이 0원 이하이면 에러
         if (amount <= 0){

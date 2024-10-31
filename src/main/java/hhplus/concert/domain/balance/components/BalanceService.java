@@ -39,7 +39,6 @@ public class BalanceService {
     @Transactional
     public Balance charge(Long userId, int amount) {
         Balance balance = balanceRepository.findByUserId(userId);
-        //Balance balance = balanceRepository.findByUserIdWithPessimisticLock(userId); // 비관적 락을 적용
 
         if (balance == null) {
             balance = new Balance(userRepository.findById(userId), amount, LocalDateTime.now());
