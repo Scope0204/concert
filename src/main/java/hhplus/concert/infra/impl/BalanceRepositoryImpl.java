@@ -3,8 +3,6 @@ package hhplus.concert.infra.impl;
 import hhplus.concert.domain.balance.models.Balance;
 import hhplus.concert.domain.balance.repositories.BalanceRepository;
 import hhplus.concert.infra.jpa.JpaBalanceRepository;
-import hhplus.concert.support.error.ErrorCode;
-import hhplus.concert.support.error.exception.BusinessException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -17,14 +15,12 @@ public class BalanceRepositoryImpl implements BalanceRepository {
 
     @Override
     public Balance findByUserId(Long userId) {
-        return jpaBalanceRepository.findByUserId(userId)
-                .orElseThrow(() ->  new BusinessException(ErrorCode.BALANCE_NOT_FOUND));
+        return jpaBalanceRepository.findByUserId(userId);
     }
 
     @Override
     public Balance findByUserIdWithPessimisticLock(Long userId) {
-        return jpaBalanceRepository.findByUserIdWithPessimisticLock(userId)
-                .orElseThrow(() ->  new BusinessException(ErrorCode.BALANCE_NOT_FOUND));
+        return jpaBalanceRepository.findByUserIdWithPessimisticLock(userId);
     }
 
     @Override
