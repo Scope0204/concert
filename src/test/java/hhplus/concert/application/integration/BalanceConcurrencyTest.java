@@ -30,7 +30,7 @@ public class BalanceConcurrencyTest {
     private BalanceRepository balanceRepository;
 
     /**
-     * 비관적 락을 사용하는 경우에는, 동시 충전이 오면 순차적으로 처리 및 대기하여 모두 성공한다.
+     * 비관적 락, 분산 락을 사용하는 경우에는, 동시 충전이 오면 순차적으로 락을 획득하여 처리 및 대기하여 모두 성공한다.
      * 낙관적 락을 사용하는 경우에만 테스트에 성공한다.
      */
     @Test
@@ -77,7 +77,7 @@ public class BalanceConcurrencyTest {
 
     /**
      * 낙관적 락을 사용하는 경우애는, 동시에 많은 요청을 진행하는 경우 데이터의 정합성을 보장하지 않아 테스트에 실패한다.
-     * 비관적 락을 사용하는 경우에만 테스트에 성공한다.
+     * 비관적 락, 분산 락을 사용하는 경우에는, 동시 충전이 오면 순차적으로 락을 획득하여 처리 및 대기하여 모두 성공한다.
      */
     @Test
     void 동시에_100번_충전_요청을_하는경우_순차적으로_모두_성공한다 () throws InterruptedException {

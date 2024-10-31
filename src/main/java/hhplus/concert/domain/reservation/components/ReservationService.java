@@ -16,6 +16,7 @@ import hhplus.concert.support.type.ReservationStatus;
 import hhplus.concert.support.type.SeatStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,12 +50,12 @@ public class ReservationService {
      * @param seatId
      * @return Reservation
      */
+    @Transactional
     public Reservation createReservation(Long userId, Long concertId, Long concertScheduleId, Long seatId) {
         User user = userRepository.findById(userId);
         Concert concert = concertRepository.findById(concertId);
         ConcertSchedule concertSchedule = concertScheduleRepository.findById(concertScheduleId);
-        //Seat seat = seatRepository.findById(seatId);
-        Seat seat = seatRepository.findByIdWithPessimisticLock(seatId); // 비관적 락을 적용
+        Seat seat = seatRepository.findById(seatId);
         if(seat.getStatus() == SeatStatus.UNAVAILABLE) { // 좌석이 사용불가능 상태인 경우, 예약이 불가능.
             throw new BusinessException(ErrorCode.CONCERT_SEAT_NOT_AVAILABLE);
         }

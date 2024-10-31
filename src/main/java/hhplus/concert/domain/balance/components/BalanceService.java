@@ -6,6 +6,7 @@ import hhplus.concert.domain.user.repositories.UserRepository;
 import hhplus.concert.support.error.ErrorCode;
 import hhplus.concert.support.error.exception.BusinessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -35,6 +36,7 @@ public class BalanceService {
      * @param amount
      * @return
      */
+    @Transactional
     public Balance charge(Long userId, int amount) {
         Balance balance = balanceRepository.findByUserId(userId);
         //Balance balance = balanceRepository.findByUserIdWithPessimisticLock(userId); // 비관적 락을 적용

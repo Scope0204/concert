@@ -26,7 +26,6 @@ public class DistributedLockAop {
     private static final String REDISSON_LOCK_PREFIX = "LOCK:";
 
     private final RedissonClient redissonClient;
-    private final AopForTransaction aopForTransaction;
 
     @Around("@annotation(hhplus.concert.support.annotation.DistributedLock)")
     public Object DistributedLock(final ProceedingJoinPoint joinPoint) throws Throwable {
@@ -37,16 +36,16 @@ public class DistributedLockAop {
         // 락의 이름으로 RLock 인스턴스를 가져온다. Lock 의 고유 키 값은 '메서드 이름{userId}' 형식으로 지정.
         String key = REDISSON_LOCK_PREFIX + CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), distributedLock.key());
         RLock rLock = redissonClient.getLock(key);
-
         try {
             // 정의된 waitTime까지 Lock 획득을 시도한다, 정의된 leaseTime이 지나면 잠금을 해제하도록 한다.
             boolean available = rLock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit());  // (2)
+
             if (!available) {
                 log.info("Lock 획득 실패={}", rLock);
                 return false;
             }
-            // 새로운 트랜잭션에서 DistributedLock 어노테이션이 선언된 메서드를 실행한다.
-            return aopForTransaction.proceed(joinPoint);
+            //DistributedLock 어노테이션이 선언된 메서드를 실행한다.
+            return joinPoint.proceed();
         } catch (InterruptedException e) {
             throw new InterruptedException();
         } finally {
