@@ -1,6 +1,7 @@
 package hhplus.concert.application.reservation.usecase;
 
 import hhplus.concert.application.reservation.dto.ReservationServiceDto;
+import hhplus.concert.domain.concert.components.ConcertCacheService;
 import hhplus.concert.domain.queue.components.QueueService;
 import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.reservation.components.ReservationService;
@@ -18,10 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservationFacade {
     private final QueueService queueService;
     private final ReservationService reservationService;
+    private final ConcertCacheService concertCacheService;
 
-    public ReservationFacade(QueueService queueService, ReservationService reservationService) {
+    public ReservationFacade(QueueService queueService, ReservationService reservationService, ConcertCacheService concertCacheService) {
         this.queueService = queueService;
         this.reservationService = reservationService;
+        this.concertCacheService = concertCacheService;
     }
 
 
@@ -41,6 +44,8 @@ public class ReservationFacade {
                 reservationRequest.concertScheduleId(),
                 reservationRequest.seatId()
         );
+        // 예약이 완료되면 캐시 상태를 만료
+        concertCacheService.evictSeatCache(reservationRequest.concertId(), reservationRequest.seatId());
 
         return new ReservationServiceDto.Result(
                 reservation.getId(),
