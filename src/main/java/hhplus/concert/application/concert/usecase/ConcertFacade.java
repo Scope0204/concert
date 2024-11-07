@@ -3,7 +3,6 @@ package hhplus.concert.application.concert.usecase;
 import hhplus.concert.application.concert.dto.ConcertServiceDto;
 import hhplus.concert.domain.concert.components.ConcertService;
 import hhplus.concert.domain.queue.components.QueueService;
-import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.support.config.CacheConfig;
 import hhplus.concert.support.error.ErrorCode;
 import hhplus.concert.support.error.exception.BusinessException;
@@ -102,8 +101,8 @@ public class ConcertFacade {
      * 토큰을 통해 대기열 상태를 검증
      */
     private void validateQueueStatus(String token){
-        Queue queue = queueService.findQueueByToken(token);
-        if(queue.getStatus() != QueueStatus.ACTIVE) {
+        QueueStatus queueStatus = queueService.getQueueStatus(token);
+        if(queueStatus != QueueStatus.ACTIVE) {
             throw new BusinessException(ErrorCode.QUEUE_NOT_ALLOWED);
         }
     }

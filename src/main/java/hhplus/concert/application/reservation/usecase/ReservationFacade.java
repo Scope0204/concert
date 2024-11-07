@@ -3,7 +3,6 @@ package hhplus.concert.application.reservation.usecase;
 import hhplus.concert.application.reservation.dto.ReservationServiceDto;
 import hhplus.concert.domain.concert.components.ConcertCacheService;
 import hhplus.concert.domain.queue.components.QueueService;
-import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.reservation.components.ReservationService;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.support.annotation.DistributedLock;
@@ -68,9 +67,12 @@ public class ReservationFacade {
         reservationService.cancelReservations();
     }
 
+    /**
+     * 토큰을 통해 대기열 상태를 검증
+     */
     private void validateQueueStatus(String token){
-        Queue queue = queueService.findQueueByToken(token);
-        if(queue.getStatus() != QueueStatus.ACTIVE) {
+        QueueStatus queueStatus = queueService.getQueueStatus(token);
+        if(queueStatus != QueueStatus.ACTIVE) {
             throw new BusinessException(ErrorCode.QUEUE_NOT_ALLOWED);
         }
     }

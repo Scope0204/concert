@@ -1,82 +1,71 @@
 package hhplus.concert.domain.queue.components;
 
-import hhplus.concert.domain.queue.models.Queue;
-import hhplus.concert.domain.queue.repositoties.QueueRepository;
-import hhplus.concert.domain.user.models.User;
+import hhplus.concert.domain.queue.repositoties.QueueRedisRepository;
 import hhplus.concert.support.type.QueueStatus;
 import hhplus.concert.support.util.JwtUtil;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Service
 public class QueueService {
     private final JwtUtil jwtUtil;
-    private final QueueRepository queueRepository;
+    private final QueueRedisRepository queueRedisRepository;
+    private static final int ACTIVE_MAX_SIZE = 100;
+    public static final long TOKEN_EXPIRATION_TIME = 10L * 60L * 1000; // 10 minutes
 
-    public QueueService(JwtUtil jwtUtil, QueueRepository queueRepository) {
+    public QueueService(JwtUtil jwtUtil, QueueRedisRepository queueRedisRepository) {
         this.jwtUtil = jwtUtil;
-        this.queueRepository = queueRepository;
+        this.queueRedisRepository = queueRedisRepository;
     }
 
-    // UserId를 통해 대기열에서 대기중인 정보를 찾는다
-    public Queue findByUserIdAndStatus(Long userId, QueueStatus queueStatus){
-        return queueRepository.findByUserIdAndStatus(userId, queueStatus);
-    }
+    // userId를 통해 JWT 토큰을 발급하고, WaitingQueue 에 추가한다.
+    public String enqueueAndGenerateToken(Long userId) {
+        String token = jwtUtil.generateToken(userId);
+        double score = (double) System.currentTimeMillis();
 
-    // 대기열의 상태를 변경한다
-    public void updateStatus(Queue queue, QueueStatus queueStatus){
-        queue.updateStatus(queueStatus);
-        queueRepository.save(queue);
-    }
-
-    // 대기열에 추가하고 토큰을 발급한다
-    public String enqueueAndGenerateToken(User user) {
-        String token = jwtUtil.generateToken(user.getId());
-
-        Queue queue = Queue.builder()
-                .user(user)
-                .token(token)
-                .status(QueueStatus.WAIT)
-                .createdAt(LocalDateTime.now())
-                .build();
-        queueRepository.save(queue);
+        queueRedisRepository.addToWaitingQueue(token, score);
         return token;
     }
 
-    // 토큰 정보를 통해 대기열 조회
-    public Queue findQueueByToken(String token) {
-        return queueRepository.findByToken(token);
+    // 해당 토큰의 상태를 조회 (어느 대기열에 존재하는지 유무에 따라 달라짐)
+    public QueueStatus getQueueStatus(String token) {
+        if (queueRedisRepository.findActiveQueueByToken(token)) {
+            return QueueStatus.ACTIVE;
+        } else if (queueRedisRepository.findWaitingQueueByToken(token)) {
+            return QueueStatus.WAIT;
+        } else {
+            return QueueStatus.EXPIRED;
+        }
     }
 
-    // 대기열 상태가 WAIT 인 상태 중 해당 대기열이 몇번째에 있는지 확인
-    // 다른 상태의 경우 대기열의 의미가 없으므로 0을 반환
-    public int getQueuePositionInWaitingList(Long queueId, QueueStatus queueStatus) {
-        return (queueStatus == QueueStatus.WAIT)
-                ? queueRepository.getQueuePositionInWaitingList(queueId, queueStatus)
-                : 0;
+    public Long getQueuePositionInWaitingList(String token) {
+        return queueRedisRepository.getPositionInWaitingList(token);
     }
 
-    // 대기열 상태를 확인
-    public int getQueueCountByStatus(QueueStatus queueStatus){
-        return queueRepository.getQueueCountByStatus(queueStatus);
+    // ActiveQueue 에 수용가능한 Token 개수를 구하여, 해당 개수만큼 WaitingQueue Token 을 ActiveQueue 로 추가한다.(WaitingQueue 는 삭제)
+    public void updateToActiveTokens() {
+        Long getActiveQueueCount = queueRedisRepository.getActiveQueueCount();
+        Long needToUpdateCount = Math.max(ACTIVE_MAX_SIZE - getActiveQueueCount, 0L);
+        if (needToUpdateCount == 0L) {
+            return;
+        }
+        Set<String> tokensNeedToUpdate = queueRedisRepository.getWaitingQueueTokensFromActiveQueues(needToUpdateCount);
+
+        for (String token : tokensNeedToUpdate) {
+            queueRedisRepository.updateToActiveQueue(
+                    token,
+                    System.currentTimeMillis() + TOKEN_EXPIRATION_TIME
+            );
+        }
     }
 
-    // 대기중인 상태(WAIT)의 대기열을 순서대로 활성화(ACTIVE) 상태로 변경시킬, 해당 대기열의 ID 리스트를 반환한다
-    public List<Long> getActivatedIdsFromWaitingQueues(int needToUpdateCount){
-        return queueRepository
-                .findTopByStatusOrderByIdAsc(
-                        QueueStatus.WAIT,
-                        needToUpdateCount
-                ).stream()
-                .map(queue -> queue.getId())
-                .collect(Collectors.toList());
+    public void removeExpiredActiveQueue() {
+        queueRedisRepository.removeExpiredActiveQueue(System.currentTimeMillis());
     }
 
-    // 대기중인 상태(WAIT)의 대기열을 활성화(ACTIVE) 상태로 변경
-    public void updateQueuesToActive(List<Long> queueIds, QueueStatus queueStatus){
-        queueRepository.updateQueuesToActive(queueIds, queueStatus);
+    public void removeCompletedActiveQueue(String token) {
+        queueRedisRepository.removeCompletedActiveQueue(token);
     }
+
 }

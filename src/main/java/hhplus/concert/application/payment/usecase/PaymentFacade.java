@@ -7,7 +7,6 @@ import hhplus.concert.domain.concert.components.ConcertCacheService;
 import hhplus.concert.domain.payment.components.PaymentService;
 import hhplus.concert.domain.payment.models.Payment;
 import hhplus.concert.domain.queue.components.QueueService;
-import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.reservation.components.ReservationService;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.user.components.UserService;
@@ -57,8 +56,8 @@ public class PaymentFacade {
         }
 
         // 토큰 상태 검증
-        Queue queue = queueService.findQueueByToken(token);
-        if(queue.getStatus() != QueueStatus.ACTIVE) {
+        QueueStatus queueStatus = queueService.getQueueStatus(token);
+        if(queueStatus != QueueStatus.ACTIVE) {
             throw new BusinessException(ErrorCode.QUEUE_NOT_ALLOWED);
         }
 
@@ -77,8 +76,8 @@ public class PaymentFacade {
             reservationService.updateStatus(reservation, ReservationStatus.COMPLETED);
             // 결제가 완료되면 캐시 상태 만료
             concertCacheService.evictConcertScheduleCache(reservation.getConcert().getId());
-            // 대기열 상태 만료로 처리
-            queueService.updateStatus(queue, QueueStatus.EXPIRED);
+            // 대기열 토큰 삭제
+            queueService.removeCompletedActiveQueue(token);
         }
 
         return new PaymentServiceDto.Result(
