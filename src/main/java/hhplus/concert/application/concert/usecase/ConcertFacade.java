@@ -4,9 +4,11 @@ import hhplus.concert.application.concert.dto.ConcertServiceDto;
 import hhplus.concert.domain.concert.components.ConcertService;
 import hhplus.concert.domain.queue.components.QueueService;
 import hhplus.concert.domain.queue.models.Queue;
+import hhplus.concert.support.config.CacheConfig;
 import hhplus.concert.support.error.ErrorCode;
 import hhplus.concert.support.error.exception.BusinessException;
 import hhplus.concert.support.type.QueueStatus;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +27,13 @@ public class ConcertFacade {
      * 콘서트 목록을 조회하여 반환합니다.
      * 토큰을 통해 대기열 상태를 검증하도록 합니다.
      */
+    @Cacheable(
+            cacheNames = {CacheConfig.CACHE_TEN_MIN},
+            key = "'v1-concert-' + #token",
+            condition = "#token != null",
+            sync = true
+    )
     public List<ConcertServiceDto.Concert> getAvailableConcerts(String token){
-        // 토큰을 통해 대기열 상태를 검증
         validateQueueStatus(token);
 
         return concertService.getAvailableConcerts().stream()
@@ -42,6 +49,12 @@ public class ConcertFacade {
      * 토큰을 통해 대기열 상태를 검증하도록 합니다.
      * 현재 예약이 가능한 전체 콘서트 리스트를 Schedule dto 로 변환하여 리턴합니다.
      */
+    @Cacheable(
+            cacheNames = {CacheConfig.CACHE_TEN_MIN},
+            key = "'v1-concert-' + #concertId",
+            condition = "#token != null && #concertId != null",
+            sync = true
+    )
     public ConcertServiceDto.Schedule getAvailableSchedulesForConcert(Long concertId, String token) {
         validateQueueStatus(token);
 
@@ -62,6 +75,12 @@ public class ConcertFacade {
      * 콘서트와 날짜 정보를 입력받아 예약가능한 좌석정보를 조회합니다.
      * 토큰을 통해 대기열 상태를 검증하도록 합니다.
      */
+    @Cacheable(
+            cacheNames = {CacheConfig.CACHE_ONE_MIN},
+            key = "'v1-concert-' + #concertId + '-scheduleId-' + #scheduleId",
+            condition = "#token != null && #concertId != null && #scheduleId != null",
+            sync = true
+    )
     public ConcertServiceDto.AvailableSeat getAvailableSeats(Long concertId, Long scheduleId, String token){
         validateQueueStatus(token);
 
@@ -79,6 +98,9 @@ public class ConcertFacade {
         return new ConcertServiceDto.AvailableSeat(concertId, availableConcertSeats);
     }
 
+    /**
+     * 토큰을 통해 대기열 상태를 검증
+     */
     private void validateQueueStatus(String token){
         Queue queue = queueService.findQueueByToken(token);
         if(queue.getStatus() != QueueStatus.ACTIVE) {
