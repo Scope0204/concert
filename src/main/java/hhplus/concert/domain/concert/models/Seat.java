@@ -15,9 +15,6 @@ public class Seat {
     @Column(name = "seat_id")
     private Long id;
 
-    @Version
-    private Long version;
-
     @ManyToOne
     @JoinColumn(name = "concert_schedule_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private ConcertSchedule concertSchedule;

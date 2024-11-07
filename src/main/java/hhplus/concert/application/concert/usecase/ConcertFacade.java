@@ -27,7 +27,7 @@ public class ConcertFacade {
      */
     public List<ConcertServiceDto.Concert> getAvailableConcerts(String token){
         // 토큰을 통해 대기열 상태를 검증
-        validateQueueStatus(token); // 이거대신 ConcertServiceDto(Command에 해당) 에서 검증 메서드 구현
+        validateQueueStatus(token);
 
         return concertService.getAvailableConcerts().stream()
                 .map(concert -> new ConcertServiceDto.Concert(

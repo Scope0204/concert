@@ -45,7 +45,6 @@ class BalanceFacadeTest {
                 LocalDateTime.now()
         );
 
-        when(userRepository.findById(userId)).thenReturn(user);
         when(balanceRepository.findByUserId(userId)).thenReturn(balance);
 
         // When
@@ -53,6 +52,24 @@ class BalanceFacadeTest {
 
         // Then
         assertThat(baseAmount + chargeAmount).isEqualTo(result.getAmount());
+    }
+
+    @Test
+    void 잔액정보가_존재하지않는_사용자의_잔액_충전_테스트() {
+        // Given
+        Long userId = 0L;
+        int chargeAmount = 300;
+
+        User user = new User("jkcho");
+
+        when(balanceRepository.findByUserId(userId)).thenReturn(null);
+        when(userRepository.findById(userId)).thenReturn(user);
+
+        // When
+        Balance result = balanceService.charge(userId, chargeAmount);
+
+        // Then
+        assertThat(chargeAmount).isEqualTo(result.getAmount());
     }
 
     @Test

@@ -2,7 +2,6 @@ package hhplus.concert.domain.balance.components;
 
 import hhplus.concert.domain.balance.models.Balance;
 import hhplus.concert.domain.balance.repositories.BalanceRepository;
-import hhplus.concert.domain.user.models.User;
 import hhplus.concert.domain.user.repositories.UserRepository;
 import hhplus.concert.support.error.ErrorCode;
 import hhplus.concert.support.error.exception.BusinessException;
@@ -23,24 +22,36 @@ public class BalanceService {
 
     public Balance getBalanceByUserId(Long userId) {
         Balance balance = balanceRepository.findByUserId(userId);
+        if(balance == null ) {
+            throw new BusinessException(ErrorCode.BALANCE_NOT_FOUND);
+        }
         return balance;
     }
 
+    /**
+     * 잔액 충전 요청
+     * 헤당 유저의 잔액 정보가 없는 걍우 새롭게 생성
+     * 기존 잔액이 있는 경우 금액 업데이트
+     * @param userId
+     * @param amount
+     * @return
+     */
     @Transactional
     public Balance charge(Long userId, int amount) {
-        // 충전 금액이 0원 이하이면 에러
-        if (amount <= 0){
-            throw new BusinessException(ErrorCode.BALANCE_INVALID_CHARGE_AMOUNT);
-        }
-        User user = userRepository.findById(userId);
         Balance balance = balanceRepository.findByUserId(userId);
-        balance.updateAmount(amount);
-        balanceRepository.save(balance); // 낙관적 락 적용
+
+        if (balance == null) {
+            balance = new Balance(userRepository.findById(userId), amount, LocalDateTime.now());
+        } else {
+            balance.updateAmount(amount);
+        }
+
+        balanceRepository.save(balance);
 
         return new Balance(
-                user,
+                balance.getUser(),
                 balance.getAmount(),
-                LocalDateTime.now()
+                balance.getUpdatedAt()
         );
     }
 }

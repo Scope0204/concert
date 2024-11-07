@@ -6,7 +6,6 @@ import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.user.models.User;
 import hhplus.concert.support.type.PaymentStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -24,7 +23,6 @@ public class PaymentService {
      * @param userInfo
      * @param reservationInfo
      */
-    @Transactional
     public Payment execute(User userInfo, Reservation reservationInfo) {
         try {
             Payment payment = new Payment(

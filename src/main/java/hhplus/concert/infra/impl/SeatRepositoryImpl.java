@@ -30,6 +30,12 @@ public class SeatRepositoryImpl implements SeatRepository {
     }
 
     @Override
+    public Seat findByIdWithPessimisticLock(Long seatId) {
+        return jpaSeatRepository.findByIdWithPessimisticLock(seatId)
+               .orElseThrow(() -> new BusinessException(ErrorCode.CONCERT_SEAT_NOT_FOUND));
+    }
+
+    @Override
     public void updateAllStatusByIds(List<Long> seatIds, SeatStatus seatStatus) {
         jpaSeatRepository.updateAllStatusByIds(seatIds, seatStatus);
     }
