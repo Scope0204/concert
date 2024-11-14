@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
+@Table(name = "concert_schedule", indexes = @Index(name = "idx_concert_id", columnList = "concert_id"))
 public class ConcertSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
