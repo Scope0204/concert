@@ -14,7 +14,12 @@ public class QueueScheduler {
 
     @Scheduled(fixedRate = 60000)
     public void maintainActiveQueueCountWithScheduler() {
-        queueFacade.maintainActiveQueueCountWithScheduler();
+        queueFacade.updateToActiveTokens();
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void cancelExpiredActiveQueue() {
+        queueFacade.cancelExpiredActiveQueue();
     }
 
 }

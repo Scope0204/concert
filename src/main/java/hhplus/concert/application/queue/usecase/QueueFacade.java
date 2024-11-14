@@ -2,19 +2,13 @@ package hhplus.concert.application.queue.usecase;
 
 import hhplus.concert.application.queue.dto.QueueServiceDto;
 import hhplus.concert.domain.queue.components.QueueService;
-import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.user.components.UserService;
 import hhplus.concert.domain.user.models.User;
 import hhplus.concert.support.type.QueueStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class QueueFacade {
-    /*@Value("${queue.active-max-size}")
-    private int activeMaxSize;*/
-    // 테스트 용이하게 변경
-    private static final int ACTIVE_MAX_SIZE = 100;
 
     private final UserService userService;
     private final QueueService queueService;
@@ -26,56 +20,43 @@ public class QueueFacade {
 
     /**
      * 1. 대기열 토큰 발급
-     * userId 검증
-     * user 가 존재하는 경우, 대기 중인 대기열 상태를 검증
-     * 대기열이 이미 존재하는 경우, 해당 대기열을 만료 상태로 변경
-     * 새롭게 대기열 상태에 저장 및 토큰을 발급. 토큰 정보를 전달
+     * userId 유저가 존재하는지 검증
+     * 토큰을 발급 후 WaitingQueue Redis SortedSet 에 저장. 토큰 정보를 전달
      */
-    @Transactional
     public QueueServiceDto.IssuedToken issueQueueToken(Long userId){
-        Queue queue = queueService.findByUserIdAndStatus(userId, QueueStatus.WAIT);
         User user = userService.findUserInfo(userId);
-
-        if(queue!=null){
-            queueService.updateStatus(queue, QueueStatus.EXPIRED);
-        }
-        String queueToken = queueService.enqueueAndGenerateToken(user);
-
+        String queueToken = queueService.enqueueAndGenerateToken(user.getId());
         return new QueueServiceDto.IssuedToken(queueToken);
     }
 
     /**
-     * 2. 유저 토큰을 통해 대기열 정보 조회
-     * polling 용 api
-     * header Token 을 통해 queue 의 정보를 반환한다.
-     * 반환 된 queue 에서 현재 대기열이 얼마나 남았는지를 계산해서 상태를 같이 반환한다.
+     * 2. 유저 토큰을 통해 대기열 정보 조회(polling 용 api)
+     * header Token 을 통해 토큰 상태를 반환한다.(어느 대기열에 위치하느냐에 따라 다르다)
+     * 현재 대기열에서, 순서가 얼마나 남았는지를 같이 반환한다.
      */
     public QueueServiceDto.Queue findQueueByToken(String token){
-        Queue queue = queueService.findQueueByToken(token);
 
-        // 대기열 순서 계산 후 전달. WAIT 상태 대기열만 고려
-        int queuePosition = queueService.getQueuePositionInWaitingList(queue.getId(), queue.getStatus());
+        QueueStatus queueStatus = queueService.getQueueStatus(token);
+        Long queuePosition = (queueStatus == QueueStatus.WAIT) ? queueService.getQueuePositionInWaitingList(token) : 0;
 
         return new QueueServiceDto.Queue(
-                queue.getStatus(),
-                queue.getCreatedAt(),
+                queueStatus,
                 queuePosition
         );
     }
 
     /**
-     * 스케줄러를 통해 대기열 ACTIVE 상태를 관리
-     * WAIT 인 queue 중에서 순서대로 ACTIVE 로 업데이트가 가능한 대기열 id 목록을 확인하여
-     * ACTIVE 상태로 변경(이때, 시간도 같이 기록)
+     * 스케줄러를 통해 WaitingQueue 상태를 관리.
+     * 순서대로 토큰을 ActiveQueue 로 업데이트
      */
-    @Transactional
-    public void maintainActiveQueueCountWithScheduler(){
-        int needToUpdateCount = ACTIVE_MAX_SIZE - queueService.getQueueCountByStatus(QueueStatus.ACTIVE);
+    public void updateToActiveTokens() {
+        queueService.updateToActiveTokens();
+    }
 
-        if(needToUpdateCount > 0) {
-            queueService.updateQueuesToActive(
-                    queueService.getActivatedIdsFromWaitingQueues(needToUpdateCount),
-                    QueueStatus.ACTIVE);
-        }
+    /**
+     * 스케쥴러를 통해 만료된 ActiveQueue 삭제
+     */
+    public void cancelExpiredActiveQueue() {
+        queueService.removeExpiredActiveQueue();
     }
 }

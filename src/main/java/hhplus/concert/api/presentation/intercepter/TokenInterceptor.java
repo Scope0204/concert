@@ -1,7 +1,6 @@
 package hhplus.concert.api.presentation.intercepter;
 
 import hhplus.concert.domain.queue.components.QueueService;
-import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.support.type.QueueStatus;
 import hhplus.concert.support.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,10 +56,7 @@ public class TokenInterceptor implements HandlerInterceptor {
      * 토큰을 통해 대기열 상태와 만료 상태를 확인
      */
     private boolean isValidateQueueStatus(String token) {
-        Queue queue = queueService.findQueueByToken(token); // 서비스 계층에서 token 확인
-        if(queue == null || queue.getStatus() == QueueStatus.EXPIRED) {
-            return false;
-        }
-        return true;
+        QueueStatus queueStatus = queueService.getQueueStatus(token); // 서비스 계층에서 token 확인
+        return queueStatus != null && queueStatus != QueueStatus.EXPIRED;
     }
 }
