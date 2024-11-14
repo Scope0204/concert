@@ -3,10 +3,10 @@ package hhplus.concert.application.payment.usecase;
 import hhplus.concert.application.payment.dto.PaymentServiceDto;
 import hhplus.concert.domain.balance.components.BalanceService;
 import hhplus.concert.domain.balance.models.Balance;
+import hhplus.concert.domain.concert.components.ConcertCacheService;
 import hhplus.concert.domain.payment.components.PaymentService;
 import hhplus.concert.domain.payment.models.Payment;
 import hhplus.concert.domain.queue.components.QueueService;
-import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.reservation.components.ReservationService;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.user.components.UserService;
@@ -26,10 +26,12 @@ public class PaymentFacade {
     private final ReservationService reservationService;
     private final BalanceService balanceService;
     private final PaymentService paymentService;
+    private final ConcertCacheService concertCacheService;
 
-    public PaymentFacade(UserService userService, QueueService queueService, ReservationService reservationService, BalanceService balanceService, PaymentService paymentService) {
+    public PaymentFacade(UserService userService, QueueService queueService, ReservationService reservationService, BalanceService balanceService, PaymentService paymentService, ConcertCacheService concertCacheService) {
         this.userService = userService;
         this.queueService = queueService;
+        this.concertCacheService = concertCacheService;
         this.reservationService = reservationService;
         this.balanceService = balanceService;
         this.paymentService = paymentService;
@@ -54,8 +56,8 @@ public class PaymentFacade {
         }
 
         // 토큰 상태 검증
-        Queue queue = queueService.findQueueByToken(token);
-        if(queue.getStatus() != QueueStatus.ACTIVE) {
+        QueueStatus queueStatus = queueService.getQueueStatus(token);
+        if(queueStatus != QueueStatus.ACTIVE) {
             throw new BusinessException(ErrorCode.QUEUE_NOT_ALLOWED);
         }
 
@@ -72,8 +74,10 @@ public class PaymentFacade {
         if(paymentResult.getStatus() == PaymentStatus.COMPLETED){
             // 결제 정상적으로 완료되는 경우에만 만료로 처리해야함.
             reservationService.updateStatus(reservation, ReservationStatus.COMPLETED);
-            // 대기열 상태 만료로 처리
-            queueService.updateStatus(queue, QueueStatus.EXPIRED);
+            // 결제가 완료되면 캐시 상태 만료
+            concertCacheService.evictConcertScheduleCache(reservation.getConcert().getId());
+            // 대기열 토큰 삭제
+            queueService.removeCompletedActiveQueue(token);
         }
 
         return new PaymentServiceDto.Result(

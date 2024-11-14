@@ -1,8 +1,8 @@
 package hhplus.concert.application.reservation.usecase;
 
 import hhplus.concert.application.reservation.dto.ReservationServiceDto;
+import hhplus.concert.domain.concert.components.ConcertCacheService;
 import hhplus.concert.domain.queue.components.QueueService;
-import hhplus.concert.domain.queue.models.Queue;
 import hhplus.concert.domain.reservation.components.ReservationService;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.support.annotation.DistributedLock;
@@ -18,10 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservationFacade {
     private final QueueService queueService;
     private final ReservationService reservationService;
+    private final ConcertCacheService concertCacheService;
 
-    public ReservationFacade(QueueService queueService, ReservationService reservationService) {
+    public ReservationFacade(QueueService queueService, ReservationService reservationService, ConcertCacheService concertCacheService) {
         this.queueService = queueService;
         this.reservationService = reservationService;
+        this.concertCacheService = concertCacheService;
     }
 
 
@@ -41,6 +43,8 @@ public class ReservationFacade {
                 reservationRequest.concertScheduleId(),
                 reservationRequest.seatId()
         );
+        // 예약이 완료되면 캐시 상태를 만료
+        concertCacheService.evictSeatCache(reservationRequest.concertId(), reservationRequest.seatId());
 
         return new ReservationServiceDto.Result(
                 reservation.getId(),
@@ -63,9 +67,12 @@ public class ReservationFacade {
         reservationService.cancelReservations();
     }
 
+    /**
+     * 토큰을 통해 대기열 상태를 검증
+     */
     private void validateQueueStatus(String token){
-        Queue queue = queueService.findQueueByToken(token);
-        if(queue.getStatus() != QueueStatus.ACTIVE) {
+        QueueStatus queueStatus = queueService.getQueueStatus(token);
+        if(queueStatus != QueueStatus.ACTIVE) {
             throw new BusinessException(ErrorCode.QUEUE_NOT_ALLOWED);
         }
     }
