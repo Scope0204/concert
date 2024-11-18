@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
+@Table(name = "balance", indexes = @Index(name = "idx_user_id", columnList = "user_id"))
 public class Balance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
