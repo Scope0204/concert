@@ -5,6 +5,9 @@ import hhplus.concert.domain.payment.event.repositories.PaymentEventOutBoxReposi
 import hhplus.concert.infra.jpa.JpaPaymentOutBoxRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Repository
 public class PaymentOutBoxRepositoryImpl implements PaymentEventOutBoxRepository {
     private final JpaPaymentOutBoxRepository jpaPaymentOutBoxRepository;
@@ -22,5 +25,15 @@ public class PaymentOutBoxRepositoryImpl implements PaymentEventOutBoxRepository
     @Override
     public PaymentEventOutBox findByPaymentId(Long paymentId) {
         return jpaPaymentOutBoxRepository.findByPaymentId(paymentId);
+    }
+
+    @Override
+    public List<PaymentEventOutBox> findAllFailedEvent(LocalDateTime dateTime) {
+        return jpaPaymentOutBoxRepository.findAllFailedEvent(dateTime);
+    }
+
+    @Override
+    public void deleteAllPublishedEvent(LocalDateTime dateTime) {
+        jpaPaymentOutBoxRepository.deleteAllPublishedEvent(dateTime);
     }
 }

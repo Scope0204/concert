@@ -23,13 +23,13 @@ public class PaymentEventOutBox {
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
 
-    @Column(name = "published_date_time", nullable = false)
-    private LocalDateTime publishedDateTime;
+    @Column(name = "published_at", nullable = false)
+    private LocalDateTime publishedAt;
 
     public PaymentEventOutBox(Long paymentId, EventStatus eventStatus) {
         this.paymentId = paymentId;
         this.eventStatus = eventStatus;
-        this.publishedDateTime = LocalDateTime.now();
+        this.publishedAt = LocalDateTime.now();
     }
     public void updateEventStatus(EventStatus eventStatus) {
         this.eventStatus = eventStatus;
