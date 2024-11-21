@@ -1,4 +1,4 @@
-package hhplus.concert.api.presentation.exceptionhandler;
+package hhplus.concert.api.interfaces.exceptionhandler;
 
 import hhplus.concert.support.error.ErrorCode;
 import hhplus.concert.support.error.ErrorResponse;

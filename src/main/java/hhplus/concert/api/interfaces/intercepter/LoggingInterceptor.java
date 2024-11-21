@@ -1,4 +1,4 @@
-package hhplus.concert.api.presentation.intercepter;
+package hhplus.concert.api.interfaces.intercepter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package hhplus.concert.api.presentation.request;
+package hhplus.concert.api.interfaces.request;
 
 import hhplus.concert.application.reservation.dto.ReservationServiceDto;
 

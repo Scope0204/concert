@@ -1,6 +1,6 @@
-package hhplus.concert.api.presentation.controller;
+package hhplus.concert.api.interfaces.controller;
 
-import hhplus.concert.api.presentation.response.QueueResponse;
+import hhplus.concert.api.interfaces.response.QueueResponse;
 import hhplus.concert.application.queue.usecase.QueueFacade;
 import org.springframework.web.bind.annotation.*;
 

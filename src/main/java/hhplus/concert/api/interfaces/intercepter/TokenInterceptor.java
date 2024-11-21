@@ -1,4 +1,4 @@
-package hhplus.concert.api.presentation.intercepter;
+package hhplus.concert.api.interfaces.intercepter;
 
 import hhplus.concert.domain.queue.components.QueueService;
 import hhplus.concert.support.type.QueueStatus;

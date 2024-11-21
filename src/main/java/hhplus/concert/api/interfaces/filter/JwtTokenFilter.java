@@ -1,4 +1,4 @@
-package hhplus.concert.api.presentation.filter;
+package hhplus.concert.api.interfaces.filter;
 
 import hhplus.concert.support.util.JwtUtil;
 import jakarta.servlet.FilterChain;

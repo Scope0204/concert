@@ -1,4 +1,4 @@
-package hhplus.concert.api.presentation.scheduler;
+package hhplus.concert.api.interfaces.scheduler;
 
 import hhplus.concert.application.queue.usecase.QueueFacade;
 import org.springframework.scheduling.annotation.Scheduled;

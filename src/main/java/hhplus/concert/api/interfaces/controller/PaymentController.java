@@ -1,7 +1,7 @@
-package hhplus.concert.api.presentation.controller;
+package hhplus.concert.api.interfaces.controller;
 
-import hhplus.concert.api.presentation.request.PaymentRequest;
-import hhplus.concert.api.presentation.response.PaymentResponse;
+import hhplus.concert.api.interfaces.request.PaymentRequest;
+import hhplus.concert.api.interfaces.response.PaymentResponse;
 import hhplus.concert.application.payment.usecase.PaymentFacade;
 import org.springframework.web.bind.annotation.*;
 

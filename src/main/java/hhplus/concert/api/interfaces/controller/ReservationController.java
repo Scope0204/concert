@@ -1,7 +1,7 @@
-package hhplus.concert.api.presentation.controller;
+package hhplus.concert.api.interfaces.controller;
 
-import hhplus.concert.api.presentation.request.ReservationRequest;
-import hhplus.concert.api.presentation.response.ReservationResponse;
+import hhplus.concert.api.interfaces.request.ReservationRequest;
+import hhplus.concert.api.interfaces.response.ReservationResponse;
 import hhplus.concert.application.reservation.usecase.ReservationFacade;
 import org.springframework.web.bind.annotation.*;
 

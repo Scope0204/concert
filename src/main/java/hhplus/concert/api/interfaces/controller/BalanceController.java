@@ -1,7 +1,7 @@
-package hhplus.concert.api.presentation.controller;
+package hhplus.concert.api.interfaces.controller;
 
-import hhplus.concert.api.presentation.request.BalanceRequest;
-import hhplus.concert.api.presentation.response.BalanceResponse;
+import hhplus.concert.api.interfaces.request.BalanceRequest;
+import hhplus.concert.api.interfaces.response.BalanceResponse;
 import hhplus.concert.application.balance.usecase.BalanceFacade;
 import org.springframework.web.bind.annotation.*;
 
