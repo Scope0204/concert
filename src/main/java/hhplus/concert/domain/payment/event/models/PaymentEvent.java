@@ -1,4 +1,4 @@
-package hhplus.concert.domain.payment.event;
+package hhplus.concert.domain.payment.event.models;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
