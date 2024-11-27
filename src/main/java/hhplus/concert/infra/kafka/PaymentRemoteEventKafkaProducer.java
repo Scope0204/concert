@@ -1,6 +1,6 @@
 package hhplus.concert.infra.kafka;
 
-import hhplus.concert.domain.payment.event.components.PaymentEventPublisher;
+import hhplus.concert.domain.payment.event.components.PaymentRemoteEventPublisher;
 import hhplus.concert.domain.payment.event.models.PaymentEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,12 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@Qualifier("kafkaPublisher")
-public class PaymentEventKafkaProducer implements PaymentEventPublisher {
+public class PaymentRemoteEventKafkaProducer implements PaymentRemoteEventPublisher {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public PaymentEventKafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
+    public PaymentRemoteEventKafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 

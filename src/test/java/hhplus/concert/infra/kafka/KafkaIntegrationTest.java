@@ -14,7 +14,7 @@ class KafkaIntegrationTest {
     PaymentEventKafkaConsumer consumer;
 
     @Autowired
-    PaymentEventKafkaProducer producer;
+    PaymentRemoteEventKafkaProducer producer;
 
     @Test
     void 카프카를_사용하여_발행된_메시지가_정상적으로_소비되었는지_내용을_확인() throws InterruptedException {

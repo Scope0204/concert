@@ -5,7 +5,6 @@ import hhplus.concert.domain.payment.event.models.PaymentEventOutBox;
 import hhplus.concert.domain.payment.event.repositories.PaymentEventOutBoxRepository;
 import hhplus.concert.support.type.EventStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +16,11 @@ import java.util.List;
 public class PaymentEventOutBoxService {
 
     private final PaymentEventOutBoxRepository paymentEventOutBoxRepository;
-    private final PaymentEventPublisher paymentEventPublisher;
+    private final PaymentRemoteEventPublisher paymentRemoteEventPublisher;
 
-    public PaymentEventOutBoxService(PaymentEventOutBoxRepository paymentEventOutBoxRepository, @Qualifier("kafkaPublisher") PaymentEventPublisher paymentEventPublisher) {
+    public PaymentEventOutBoxService(PaymentEventOutBoxRepository paymentEventOutBoxRepository, PaymentRemoteEventPublisher paymentRemoteEventPublisher) {
         this.paymentEventOutBoxRepository = paymentEventOutBoxRepository;
-        this.paymentEventPublisher = paymentEventPublisher;
+        this.paymentRemoteEventPublisher = paymentRemoteEventPublisher;
     }
 
     /**
@@ -36,7 +35,7 @@ public class PaymentEventOutBoxService {
      *  Kafka event 발행.
      */
     public void publishPaymentEvent(PaymentEvent event) {
-        paymentEventPublisher.publishPaymentEvent(event);
+        paymentRemoteEventPublisher.publishPaymentEvent(event);
     }
 
     /**
@@ -55,7 +54,7 @@ public class PaymentEventOutBoxService {
     public void retryFailedPaymentEvent() {
         List<PaymentEventOutBox> failedPaymentEventOutBoxList =  paymentEventOutBoxRepository.findAllFailedEvent(LocalDateTime.now().minusMinutes(10));
         for (PaymentEventOutBox paymentEventOutBox : failedPaymentEventOutBoxList) {
-            paymentEventPublisher.publishPaymentEvent(new PaymentEvent(paymentEventOutBox.getPaymentId()));
+            paymentRemoteEventPublisher.publishPaymentEvent(new PaymentEvent(paymentEventOutBox.getPaymentId()));
         }
     }
 

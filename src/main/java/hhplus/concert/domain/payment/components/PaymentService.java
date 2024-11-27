@@ -1,13 +1,12 @@
 package hhplus.concert.domain.payment.components;
 
-import hhplus.concert.domain.payment.event.components.PaymentEventPublisher;
+import hhplus.concert.domain.payment.event.components.PaymentAppEventPublisher;
 import hhplus.concert.domain.payment.event.models.PaymentEvent;
 import hhplus.concert.domain.payment.models.Payment;
 import hhplus.concert.domain.payment.repositories.PaymentRepository;
 import hhplus.concert.domain.reservation.models.Reservation;
 import hhplus.concert.domain.user.models.User;
 import hhplus.concert.support.type.PaymentStatus;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,11 +14,11 @@ import java.time.LocalDateTime;
 @Service
 public class PaymentService {
     private final PaymentRepository paymentRepository;
-    private final PaymentEventPublisher paymentEventPublisher;
+    private final PaymentAppEventPublisher eventPublisher;
 
-    public PaymentService(PaymentRepository paymentRepository, @Qualifier("applicationPublisher") PaymentEventPublisher paymentEventPublisher) {
+    public PaymentService(PaymentRepository paymentRepository, PaymentAppEventPublisher eventPublisher) {
         this.paymentRepository = paymentRepository;
-        this.paymentEventPublisher = paymentEventPublisher;
+        this.eventPublisher = eventPublisher;
     }
 
     /**
@@ -51,7 +50,7 @@ public class PaymentService {
         }
 
         paymentRepository.save(payment);
-        paymentEventPublisher.publishPaymentEvent(new PaymentEvent(payment.getId()));
+        eventPublisher.publishPaymentEvent(new PaymentEvent(payment.getId()));
 
         return payment;
     }
