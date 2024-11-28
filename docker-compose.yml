@@ -44,10 +44,80 @@ services:
     depends_on:
       - kafka
     ports:
-      - "8080:8080"
+      - "8081:8081"
     environment:
       KAFKA_CLUSTERS_0_NAME: Single Cluster
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
     networks:
       - concert-network
+  k6:
+    image: grafana/k6
+    container_name: k6
+    volumes:
+      - ./k6:/k6
+    command: run -o experimental-prometheus-rw /k6/queue/queue.js
+    environment:
+      - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write
+      - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true
+    depends_on:
+      - prometheus
+    networks:
+      - concert-network
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - concert-network
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml  # prometheus.yml 파일을 컨테이너에 마운트
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - concert-network
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - concert-network
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      TZ: Asia/Seoul
+      MYSQL_DATABASE: concert
+      MYSQL_ROOT_PASSWORD: 1111
+    ports:
+      - "3306:3306"
+    networks:
+      - concert-network
+    volumes:
+      - db-data:/var/lib/mysql
+  concert-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: concert-app
+    ports:
+      - "80:80"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/concert
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1111
+      SPRING_REDIS_HOST: redis-container
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-container:9092
+    depends_on:
+      - mysql
+      - redis
+      - kafka
+    networks:
+      - concert-network
+volumes:
+  db-data:

@@ -33,6 +33,8 @@ dependencies {
 	implementation 'mysql:mysql-connector-java:8.0.33'
 	implementation 'org.springframework.kafka:spring-kafka'
 
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus' // 마이크로미터 프로메테우스 구현체
+	implementation 'org.springframework.boot:spring-boot-starter-actuator' // 엑츄에이터
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 	compileOnly 'org.projectlombok:lombok'
@@ -50,3 +52,9 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+bootJar {
+	destinationDirectory = file("$buildDir/libs") // JAR 파일 생성 위치를 명시적으로 설정
+	archiveFileName = 'app.jar' // JAR 파일 이름을 명시적으로 설정 (Dockerfile에서 참조 용이)
+}
+
