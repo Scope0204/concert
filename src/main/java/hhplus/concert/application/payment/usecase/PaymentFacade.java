@@ -39,8 +39,8 @@ public class PaymentFacade {
 
     /**
      * 결제를 진행합니다.
-     * 1. 헤더 userId 와 예약 userId 가 일치하는지 검증
-     * 2. 토큰이 유효한지 검증
+     * 1. 토큰이 유효한지 검증
+     * 2. 헤더 userId 와 예약 userId 가 일치하는지 검증
      * 3. 결제 요청 전 잔액 확인 후 결제 처리
      * 4. 예약 좌석 상태 변경(COMPLETED)
      * 5. 대기열 상태 변경(EXPIRED)
@@ -48,17 +48,17 @@ public class PaymentFacade {
      */
     @Transactional
     public PaymentServiceDto.Result executePayment(Long userId, String token, Long reservationId) {
-        // userID 검증
-        User user = userService.findUserInfo(userId);
-        Reservation reservation = reservationService.findByIdWithPessimisticLock(reservationId);
-        if (userId != reservation.getUser().getId()) {
-            throw new BusinessException(ErrorCode.CLIENT_ERROR);
-        }
-
         // 토큰 상태 검증
         QueueStatus queueStatus = queueService.getQueueStatus(token);
         if(queueStatus != QueueStatus.ACTIVE) {
             throw new BusinessException(ErrorCode.QUEUE_NOT_ALLOWED);
+        }
+
+        // userID 검증
+        User user = userService.findUserInfo(userId);
+        Reservation reservation = reservationService.findById(reservationId);
+        if (userId != reservation.getUser().getId()) {
+            throw new BusinessException(ErrorCode.CLIENT_ERROR);
         }
 
         // 잔액이 충분한지 확인

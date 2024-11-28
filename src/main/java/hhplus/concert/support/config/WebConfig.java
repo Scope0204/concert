@@ -1,7 +1,7 @@
 package hhplus.concert.support.config;
 
-import hhplus.concert.api.presentation.intercepter.LoggingInterceptor;
-import hhplus.concert.api.presentation.intercepter.TokenInterceptor;
+import hhplus.concert.api.interfaces.intercepter.LoggingInterceptor;
+import hhplus.concert.api.interfaces.intercepter.TokenInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

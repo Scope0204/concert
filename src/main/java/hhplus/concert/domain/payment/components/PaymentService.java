@@ -1,5 +1,7 @@
 package hhplus.concert.domain.payment.components;
 
+import hhplus.concert.domain.payment.event.components.PaymentAppEventPublisher;
+import hhplus.concert.domain.payment.event.models.PaymentEvent;
 import hhplus.concert.domain.payment.models.Payment;
 import hhplus.concert.domain.payment.repositories.PaymentRepository;
 import hhplus.concert.domain.reservation.models.Reservation;
@@ -12,38 +14,44 @@ import java.time.LocalDateTime;
 @Service
 public class PaymentService {
     private final PaymentRepository paymentRepository;
+    private final PaymentAppEventPublisher eventPublisher;
 
-    public PaymentService(PaymentRepository paymentRepository) {
+    public PaymentService(PaymentRepository paymentRepository, PaymentAppEventPublisher eventPublisher) {
         this.paymentRepository = paymentRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     /**
      * 결제를 실행
      * 예상치 못한 예외가 발생하는 경우, 결제 상태를 실패로 저장할 수 있도록 한다.
+     * 결제가 완료되면, 이벤트 퍼블리셔를 통해 이벤트를 발행하여 비동기 작업을 처리할 수 있도록 한다.
      * @param userInfo
      * @param reservationInfo
      */
     public Payment execute(User userInfo, Reservation reservationInfo) {
+        Payment payment;
+
         try {
-            Payment payment = new Payment(
+            payment = new Payment(
                     userInfo,
                     reservationInfo,
                     reservationInfo.getSeat().getSeatPrice(),
                     PaymentStatus.COMPLETED,
                     LocalDateTime.now()
             );
-            paymentRepository.save(payment);
-            return payment;
         } catch (Exception e) {
-            Payment failedPayment = new Payment(
+            payment = new Payment(
                     userInfo,
                     reservationInfo,
                     reservationInfo.getSeat().getSeatPrice(),
                     PaymentStatus.FAILED,
                     LocalDateTime.now()
             );
-            paymentRepository.save(failedPayment);
-            return failedPayment;
         }
+
+        paymentRepository.save(payment);
+        eventPublisher.publishPaymentEvent(new PaymentEvent(payment.getId()));
+
+        return payment;
     }
 }
